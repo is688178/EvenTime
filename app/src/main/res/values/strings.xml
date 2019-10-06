@@ -5,5 +5,6 @@
     <string name="log_in">Log in</string>
     <string name="email">Email</string>
     <string name="full_name">Full Name</string>
-    <string name="register">Register</string>
+    <string name="register">Regístrate</string>
+    <string name="no_account">¿No tienes cuenta?</string>
 </resources>

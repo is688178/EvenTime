@@ -27,6 +27,7 @@ class ActivityRegister : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.supportActionBar?.hide() //hide the title bar
         setContentView(R.layout.activity_register)
 
         mRegister = find(R.id.activity_register_btn_register)
