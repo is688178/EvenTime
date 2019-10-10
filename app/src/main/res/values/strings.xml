@@ -7,4 +7,10 @@
     <string name="full_name">Full Name</string>
     <string name="register">Regístrate</string>
     <string name="no_account">¿No tienes cuenta?</string>
+    <string name="account">Cuenta</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="account_detail">Perfil</string>
+    <string name="registrarme">Registrarme</string>
+    <string name="add_photo">Agregar Fotografía</string>
+    <string name="name">Nombre</string>
 </resources>

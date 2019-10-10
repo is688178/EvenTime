@@ -89,13 +89,13 @@
             android:layout_marginBottom="75dp"
             android:text="@string/log_in"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@id/activity_login_tv_no_account"
+            app:layout_constraintBottom_toTopOf="@id/activity_login_tv_account"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_login_tl_password" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/activity_login_tv_no_account"
+            android:id="@+id/activity_login_tv_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -115,9 +115,9 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/textColorBlue"
-            app:layout_constraintTop_toTopOf="@+id/activity_login_tv_no_account"
-            app:layout_constraintBottom_toBottomOf="@+id/activity_login_tv_no_account"
-            app:layout_constraintStart_toEndOf="@+id/activity_login_tv_no_account"
+            app:layout_constraintTop_toTopOf="@+id/activity_login_tv_account"
+            app:layout_constraintBottom_toBottomOf="@+id/activity_login_tv_account"
+            app:layout_constraintStart_toEndOf="@+id/activity_login_tv_account"
             app:layout_constraintEnd_toEndOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

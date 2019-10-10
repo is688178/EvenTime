@@ -54,7 +54,7 @@ class ActivityLogin : AppCompatActivity() {
                     builder.setMessage("Favor de comprobar su Email/Contraseña")
 
                     // Set a positive button and its click listener on alert dialog
-                    builder.setPositiveButton("OK"){dialog, which ->
+                    builder.setPositiveButton("OK"){ _, _ ->
                         Toast.makeText(this,"Revisa y vuelve a presionar el boton....",Toast.LENGTH_SHORT).show()
                     }
 

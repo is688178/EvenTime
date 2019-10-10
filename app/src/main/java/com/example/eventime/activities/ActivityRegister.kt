@@ -30,12 +30,12 @@ class ActivityRegister : AppCompatActivity(), View.OnClickListener {
         this.supportActionBar?.hide() //hide the title bar
         setContentView(R.layout.activity_register)
 
-        mRegister = find(R.id.activity_register_btn_register)
-        mFullName = find(R.id.activity_register_tiet_full_name)
-        mEmail = find(R.id.activity_register_tiet_email)
-        mPassword = find(R.id.activity_register_tiet_password)
+//        mRegister = find(R.id.activity_register_btn_register)
+//        mFullName = find(R.id.activity_register_tiet_full_name)
+//        mEmail = find(R.id.activity_register_tiet_email)
+//        mPassword = find(R.id.activity_register_tiet_password)
 
-        mRegister.setOnClickListener(this)
+//        mRegister.setOnClickListener(this)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -47,42 +47,42 @@ class ActivityRegister : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(p0: View?) {
-        when (p0?.id) {
-            R.id.activity_register_btn_register -> {
-                //requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-
-                val strUser = mFullName.text.toString().trim()
-                val strEmail = mEmail.text.toString().trim()
-                val strPassword = mPassword.text.toString().trim()
-
-                if(strUser.isEmpty() || strPassword.isEmpty() || strEmail.isEmpty()){
-                    logInAlertDialog()
-                    return
-                }
-
-                val parseUser = ParseUser()
-                parseUser.apply {
-                    setUsername(strUser)
-                    setEmail(strEmail)
-                    setPassword(strPassword)
-                }
-
-                parseUser.signUpInBackground { error ->
-                    if (error == null) {
-                        //Sign up successful
-                        Log.d("PARSE", "Sign up successful user: $strUser")
-                        startActivity<ActivityMain>()
-                    } else {
-                        //There was an error,
-                        //networkState.postValue(NetworkState(Status.ERROR, error))
-                        Log.e("DEBUG PARSE", "Failed to complete sign up process. Error message: ${error.message} Error code ${error.code}")
-                        logInAlertDialog()
-                    }
-                }
-
-
-            }
-        }
+//        when (p0?.id) {
+//            R.id.activity_register_btn_register -> {
+//                //requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+//
+//                val strUser = mFullName.text.toString().trim()
+//                val strEmail = mEmail.text.toString().trim()
+//                val strPassword = mPassword.text.toString().trim()
+//
+//                if(strUser.isEmpty() || strPassword.isEmpty() || strEmail.isEmpty()){
+//                    logInAlertDialog()
+//                    return
+//                }
+//
+//                val parseUser = ParseUser()
+//                parseUser.apply {
+//                    setUsername(strUser)
+//                    setEmail(strEmail)
+//                    setPassword(strPassword)
+//                }
+//
+//                parseUser.signUpInBackground { error ->
+//                    if (error == null) {
+//                        //Sign up successful
+//                        Log.d("PARSE", "Sign up successful user: $strUser")
+//                        startActivity<ActivityMain>()
+//                    } else {
+//                        //There was an error,
+//                        //networkState.postValue(NetworkState(Status.ERROR, error))
+//                        Log.e("DEBUG PARSE", "Failed to complete sign up process. Error message: ${error.message} Error code ${error.code}")
+//                        logInAlertDialog()
+//                    }
+//                }
+//
+//
+//            }
+//        }
     }
 
     fun logInAlertDialog(){
