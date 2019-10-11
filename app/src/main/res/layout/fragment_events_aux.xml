@@ -1,0 +1,13 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_dark_gray"
+    tools:context="com.example.eventime.activities.FragmentEventsAux">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_events_aux_rv_events"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</FrameLayout>

@@ -18,4 +18,18 @@
 
     <color name="background">#FAFAFA</color>
 
+    <style name="NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#208BBB</item>
+        <item name="colorPrimaryVariant">#FF0000</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#2962FF</item>
+        <item name="colorSecondaryVariant">#0039CB</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorError">#F44336</item>
+        <item name="colorOnError">#FFFFFF</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#809ECB</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorOnBackground">#000DFF</item>
+    </style>
 </resources>

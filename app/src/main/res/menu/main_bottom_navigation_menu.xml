@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_main_show_events"
+        android:title="@string/main_bottom_nav_it_events"
+        android:icon="@drawable/ic_event"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_main_show_agenda"
+        android:title="@string/main_bottom_nav_it_agenda"
+        android:icon="@drawable/ic_agenda"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_main_show_sugested_events"
+        android:title="@string/main_bottom_nav_it_sugested"
+        android:icon="@drawable/ic_like"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_main_show_profile"
+        android:title="@string/main_bottom_nav_it_profile"
+        android:icon="@drawable/ic_account_circle"
+        app:showAsAction="always"/>
+</menu>
