@@ -1,10 +1,11 @@
-package com.example.eventime.activities
+package com.example.eventime.activities.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.eventime.R
+import com.example.eventime.activities.fragments.FragmentEvents
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.jetbrains.anko.find
 
@@ -13,7 +14,8 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
     private lateinit var bttmNav: BottomNavigationView
 
     private var fragments = ArrayList<Fragment>()
-    private var currentFragment = EVENTS_FRAGMENT
+    private var currentFragment =
+        EVENTS_FRAGMENT
 
     companion object {
         const val EVENTS_FRAGMENT = 0

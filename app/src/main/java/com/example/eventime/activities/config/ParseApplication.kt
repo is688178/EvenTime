@@ -1,4 +1,4 @@
-package com.example.eventime.activities
+package com.example.eventime.activities.config
 
 import android.app.Application
 import com.parse.Parse

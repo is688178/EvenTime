@@ -7,13 +7,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/item_event_iv_event_photo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/concert2"/>
+        android:layout_height="match_parent"
+        android:background="@drawable/concert2">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/item_event_tv_event_title"
@@ -25,7 +20,7 @@
             android:layout_margin="20dp"/>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/item_event_tv_event_location"
+            android:id="@+id/item_event_tv_event_location_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
@@ -36,7 +31,7 @@
             android:textColor="@color/color_primary_blue"/>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/item_event_tv_event_date"
+            android:id="@+id/item_event_tv_event_date_hour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"

@@ -1,16 +1,12 @@
-package com.example.eventime.activities
+package com.example.eventime.activities.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import org.jetbrains.anko.find
-import com.parse.*
-import org.jetbrains.anko.startActivity
 import com.example.eventime.R
 
 class ActivityRegister : AppCompatActivity(), View.OnClickListener {

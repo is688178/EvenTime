@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.eventime.activities.FragmentEvents">
+    tools:context="com.example.eventime.activities.fragments.FragmentEvents">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -27,11 +27,18 @@
             android:layout_height="wrap_content"/>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <!--<androidx.viewpager.widget.ViewPager
         android:id="@+id/fragment_events_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_events_rv_events"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_dark_gray"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_events_fab_add_event"
