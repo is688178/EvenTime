@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/item_category_iv_category_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_like"
+        android:background="@drawable/background_dark_gray_circle_category"
+        android:padding="10dp"
+        android:layout_gravity="center"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_category_tv_category_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Musica"
+        android:layout_gravity="center"
+        android:textColor="@color/colorWhite"/>
+</LinearLayout>

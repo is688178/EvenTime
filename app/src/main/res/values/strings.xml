@@ -13,4 +13,16 @@
     <string name="registrarme">Registrarme</string>
     <string name="add_photo">Agregar Fotografía</string>
     <string name="name">Nombre</string>
+
+    <!--MAIN BOTTOM NAVIGATION VIEW-->
+    <string name="main_bottom_nav_it_events">Eventos</string>
+    <string name="main_bottom_nav_it_agenda">Agenda</string>
+    <string name="main_bottom_nav_it_sugested">Sugeridos</string>
+    <string name="main_bottom_nav_it_profile">Perfil</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tab_title_events_today">Hoy</string>
+    <string name="tab_title_events_on_week">En la semana</string>
+    <string name="tab_title_events_weekend">Fin de semana</string>
 </resources>

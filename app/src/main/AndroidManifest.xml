@@ -9,16 +9,18 @@
 
     <application
         android:allowBackup="true"
-        android:name=".activities.ParseApplication"
+        android:name=".activities.config.ParseApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.ActivityRegister" />
-        <activity android:name="activities.ActivityMain" />
-        <activity android:name=".activities.ActivityLogin">
+        <activity android:name=".activities.activities.ActivityRegister" />
+        <activity android:name=".activities.activities.ActivityMain"
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.activities.ActivityLogin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

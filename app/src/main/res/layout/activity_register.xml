@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/concert_dark"
     android:fillViewport="true"
-    tools:context="com.example.eventime.activities.ActivityRegister">
+    tools:context="com.example.eventime.activities.activities.ActivityRegister">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"

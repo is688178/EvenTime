@@ -6,7 +6,7 @@
     android:id="@+id/activity_login_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ActivityLogin"
+    tools:context=".activities.activities.ActivityLogin"
     android:fillViewport="true"
     android:background="@drawable/concert_dark"
     >
