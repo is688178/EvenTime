@@ -16,10 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.activities.ActivityRegister" />
-        <activity android:name=".activities.activities.ActivityMain"
-            android:theme="@style/NoActionBar"
-            android:screenOrientation="portrait"/>
         <activity android:name=".activities.activities.ActivityLogin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +23,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.activities.ActivityAddPhoto" />
+        <activity android:name=".activities.activities.ActivityRegister" />
+        <activity android:name=".activities.activities.ActivityMain"
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait"/>
     </application>
 
 

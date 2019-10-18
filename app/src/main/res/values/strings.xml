@@ -25,4 +25,6 @@
     <string name="tab_title_events_today">Hoy</string>
     <string name="tab_title_events_on_week">En la semana</string>
     <string name="tab_title_events_weekend">Fin de semana</string>
+    <string name="next">Continuar</string>
+    <string name="addphoto">Agregar foto</string>
 </resources>

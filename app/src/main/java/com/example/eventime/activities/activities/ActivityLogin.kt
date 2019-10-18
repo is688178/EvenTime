@@ -29,7 +29,7 @@ class ActivityLogin : AppCompatActivity() {
         mTextPassword = find(R.id.activity_login_tiet_password)
         mButtonLogin = find(R.id.activity_login_btn_login)
         mTextRegister = find(R.id.activity_login_tv_register)
-        startActivity<ActivityMain>()
+        //startActivity<ActivityMain>()
         mButtonLogin.setOnClickListener {
             val strEmail = mTextEmail.text.toString().trim()
             val strPassword = mTextPassword.text.toString().trim()

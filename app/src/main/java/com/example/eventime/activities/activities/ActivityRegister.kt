@@ -1,6 +1,5 @@
 package com.example.eventime.activities.activities
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,13 +8,16 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.eventime.R
+import org.jetbrains.anko.find
+import org.jetbrains.anko.startActivity
+import com.parse.*
+
 
 class ActivityRegister : AppCompatActivity() {
     private lateinit var mFullName: EditText
     private lateinit var mEmail: EditText
     private lateinit var mPassword: EditText
     private lateinit var mPassword2: EditText
-    private lateinit var mPhoto: Button
     private lateinit var mRegister: Button
 
     companion object {
@@ -23,8 +25,7 @@ class ActivityRegister : AppCompatActivity() {
         const val EMAIL = "EMAIL"
         const val PASSWORD = "PASSWORD"
         const val PASSWORD2 = "PASSWORD2"
-        private const val REQUEST_IMAGE_GALLERY = 5
-
+        private val LOG_TAG = ActivityRegister::class.java.name
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,10 +37,7 @@ class ActivityRegister : AppCompatActivity() {
         mEmail = find(R.id.activity_register_tiet_email)
         mPassword = find(R.id.activity_register_tiet_password)
         mPassword2 = find(R.id.activity_register_tiet_password2)
-        mPhoto = find(R.id.activity_register_btn_photo)
         mRegister = find(R.id.activity_register_btn_register)
-
-        mPhoto.setOnClickListener { dispatchOpenGalleryIntent() }
 
         mRegister.setOnClickListener { onClickRegisterTry() }
     }
@@ -58,7 +56,8 @@ class ActivityRegister : AppCompatActivity() {
         mPassword2.setText(password2)
     }
 
-    fun onClickRegisterTry() {
+    private fun onClickRegisterTry() {
+        Log.v(LOG_TAG, "start onClickRegisterTry")
 
         val strUser = mFullName.text.toString().trim()
         val strEmail = mEmail.text.toString().trim()
@@ -85,20 +84,19 @@ class ActivityRegister : AppCompatActivity() {
             if (error == null) {
                 //Sign up successful
                 Log.d("PARSE", "Sign up successful user: $strUser")
-                startActivity<ActivityMain>()
+                startActivity<ActivityAddPhoto>()
             } else {
                 //There was an error,
                 //networkState.postValue(NetworkState(Status.ERROR, error))
-                Log.e(
-                    "DEBUG PARSE",
-                    "Failed to complete sign up process. Error message: ${error.message} Error code ${error.code}"
-                )
-                logInEmptyAlertDialog()
+                Log.e("DEBUG PARSE", "Failed to complete sign up process. Error message: ${error.message} Error code ${error.code}")
+                logInParseErrorAlertDialog()
             }
         }
+
+
     }
 
-    fun logInEmptyAlertDialog() {
+    private fun logInEmptyAlertDialog() {
         val builder = AlertDialog.Builder(this)
 
         // Set the alert dialog title
@@ -142,18 +140,26 @@ class ActivityRegister : AppCompatActivity() {
         dialog.show()
     }
 
-    /**
-     * Opens an image picker activity, default is Android's image gallery.
-     **/
-    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-    private fun dispatchOpenGalleryIntent() {
-        val packageManager = this.packageManager
-        Intent(Intent.ACTION_PICK).also { intent ->
-            intent.type = "image/*"
-            // Ensure that there's a gallery activity to handle the intent
-            intent.resolveActivity(packageManager).also {
-                startActivityForResult(intent, REQUEST_IMAGE_GALLERY)
-            }
+    private fun logInParseErrorAlertDialog() {
+        val builder = AlertDialog.Builder(this)
+
+        // Set the alert dialog title
+        builder.setTitle("Error de Registro en Parse")
+
+        // Display a message on alert dialog
+        builder.setMessage("Favor de ingresar todos los campos.")
+
+        // Set a positive button and its click listener on alert dialog
+        builder.setPositiveButton("OK") { _, _ ->
+            Toast.makeText(this, "Revisa y vuelve a presionar el boton...", Toast.LENGTH_SHORT)
+                .show()
         }
+
+        // Finally, make the alert dialog using builder
+        val dialog: AlertDialog = builder.create()
+
+        // Display the alert dialog on app interface
+        dialog.show()
     }
+
 }
