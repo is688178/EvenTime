@@ -20,7 +20,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center"
             android:layout_marginTop="25dp"
-            android:background="@drawable/ic_account_circle" />
+            android:src="@drawable/ic_account_circle" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/activity_photo_btn_add_photo"
