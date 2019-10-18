@@ -14,8 +14,7 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
     private lateinit var bttmNav: BottomNavigationView
 
     private var fragments = ArrayList<Fragment>()
-    private var currentFragment =
-        EVENTS_FRAGMENT
+    private var currentFragment = EVENTS_FRAGMENT
 
     companion object {
         const val EVENTS_FRAGMENT = 0
