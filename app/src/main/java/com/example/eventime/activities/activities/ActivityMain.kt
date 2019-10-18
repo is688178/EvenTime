@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.eventime.R
+import com.example.eventime.activities.fragments.FragmentCalendar
 import com.example.eventime.activities.fragments.FragmentEvents
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.jetbrains.anko.find
@@ -31,6 +32,7 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
         bttmNav.setOnNavigationItemSelectedListener(this)
 
         fragments.add(FragmentEvents())
+        fragments.add(FragmentCalendar())
         //add fragments to array
 
         setFragment()
@@ -49,9 +51,9 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
         currentFragment = when (item.itemId) {
             R.id.action_main_show_events -> {
                 EVENTS_FRAGMENT
-            } /*R.id.action_main_show_agenda -> {
+            } R.id.action_main_show_agenda -> {
                 AGENDA_FRAGMENT
-            } R.id.action_main_show_sugested_events -> {
+            }/* R.id.action_main_show_sugested_events -> {
                 SUGESTED_EVENTS_FRAGMENT
             } R.id.action_main_show_profile -> {
                 PROFILE_FRAGMENT
