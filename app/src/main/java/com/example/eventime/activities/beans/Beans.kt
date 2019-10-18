@@ -24,9 +24,10 @@ data class EventDate(
 
 data class Comment(
     val person: Person,
-    val rate: Int,
+    val eventRating: Int,
     val date: String,
-    val description: String
+    val description: String/*,
+    val event: Event*/
 )
 
 data class Person(
