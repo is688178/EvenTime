@@ -5,19 +5,21 @@ import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
-import org.jetbrains.anko.find
-import org.jetbrains.anko.startActivity
-import android.os.Environment
 import com.example.eventime.R
 import com.parse.ParseFile
 import com.parse.ParseQuery
 import com.parse.ParseUser
-import java.io.*
-
+import org.jetbrains.anko.find
+import org.jetbrains.anko.startActivity
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 
 class ActivityAddPhoto : AppCompatActivity() {
     private lateinit var mBtnAddPhoto: Button
@@ -32,15 +34,11 @@ class ActivityAddPhoto : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.supportActionBar?.hide() //hide the title bar
-        setContentView(R.layout.activity_register)
+        setContentView(R.layout.activity_add_photo)
 
-        println("mBtnAddPhoto = find(R.id.activity_photo_btn_add_photo) before")
         mBtnAddPhoto = find(R.id.activity_photo_btn_add_photo)
-        println("mBtnAddPhoto = find(R.id.activity_photo_btn_add_photo) OK")
         mIVPhoto = find(R.id.activity_photo_iv)
-        println("mIVPhoto = find(R.id.activity_photo_iv) OK")
         mBtnNextBtn = find(R.id.activity_photo_btn_next)
-        println("mBtnNextBtn = find(R.id.activity_photo_btn_next) OK")
 
         mBtnAddPhoto.setOnClickListener { dispatchOpenGalleryIntent() }
         mBtnNextBtn.setOnClickListener { startActivity<ActivityMain>() }
@@ -145,7 +143,7 @@ class ActivityAddPhoto : AppCompatActivity() {
                 //save the bitmap to disk
                 writeBitmap(bitmap, outputStream)
             }
-        } catch (exception: FileNotFoundException) {
+        } catch (exception: Exception) {
             // If the file exists but is a directory rather than a regular file
             // does not exist but cannot be created, or cannot be opened for any other reason
             Log.v(LOG_TAG, exception.message)
@@ -155,7 +153,7 @@ class ActivityAddPhoto : AppCompatActivity() {
         } finally {
             try {
                 outputStream?.close()
-            } catch (exception: IOException) {
+            } catch (exception: Exception) {
                 //I/O error occurs.
                 Log.v(LOG_TAG, exception.message)
             }
