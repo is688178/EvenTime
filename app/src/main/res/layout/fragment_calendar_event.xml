@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/color_dark_gray"
     tools:context="com.example.eventime.activities.fragments.FragmentEvents">
 
 
@@ -11,10 +12,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+    <!--
+         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:mcv_showOtherDates="all"
+            app:mcv_selectionColor="#00F"
+            android:theme="@style/CalenderViewCustom"
+            />
+    -->
 
         <CalendarView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:theme="@style/CalenderViewCustom"
             android:id="@+id/calendar"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
