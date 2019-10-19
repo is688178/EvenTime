@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.eventime.R
+import com.example.eventime.activities.fragments.FragmentCalendar
 import com.example.eventime.activities.fragments.FragmentEvents
 import com.example.eventime.activities.fragments.FragmentSugestedEvents
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -39,7 +40,7 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
         bttmNav.setOnNavigationItemSelectedListener(this)
 
         fragments.add(FragmentEvents())
-        fragments.add(FragmentEvents())
+        fragments.add(FragmentCalendar())
         fragments.add(FragmentSugestedEvents())
         //add fragments to array
 
@@ -59,9 +60,9 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
         currentFragment = when (item.itemId) {
             R.id.action_main_show_events -> {
                 EVENTS_FRAGMENT
-            } /*R.id.action_main_show_agenda -> {
+            } R.id.action_main_show_agenda -> {
                 AGENDA_FRAGMENT
-            } */R.id.action_main_show_sugested_events -> {
+            }R.id.action_main_show_sugested_events -> {
                 SUGESTED_EVENTS_FRAGMENT
             } /*R.id.action_main_show_profile -> {
                 PROFILE_FRAGMENT
