@@ -63,15 +63,29 @@ class ActivityRegister : AppCompatActivity() {
         val strEmail = mEmail.text.toString().trim()
         val strPassword = mPassword.text.toString().trim()
         val strPassword2 = mPassword2.text.toString().trim()
-        val strNonMatch = strPassword != strPassword2
 
-        if (strUser.isEmpty() || strEmail.isEmpty() || strPassword.isEmpty() || strPassword2.isEmpty()) {
-            logInEmptyAlertDialog()
-            return
-        } else if (strNonMatch) {
-            logInPasswordAlertDialog()
-            return
+        when {
+            (strUser.isEmpty() || strEmail.isEmpty() || strPassword.isEmpty() || strPassword2.isEmpty()) -> {
+                signUpErrorAlertDialog("Al menos un campo esta vacío")
+                return
+            }
+
+            (strPassword != strPassword2) -> {
+                signUpErrorAlertDialog("Las contraseñas no concuerdan")
+                return
+            }
+
+            !isValidEmail(strEmail) ->{
+                signUpErrorAlertDialog("Patron de correo inválido")
+                return
+            }
+
+            !isValidPassword(strPassword) -> {
+                signUpErrorAlertDialog("Contraseña debil: se requieren 6 a 14 caracteres, numeros, letras mayusculas y minusculas (ambas)")
+                return
+            }
         }
+
 
         val parseUser = ParseUser()
         parseUser.apply {
@@ -86,9 +100,10 @@ class ActivityRegister : AppCompatActivity() {
                 Log.d("PARSE", "Sign up successful user: $strUser")
                 startActivity<ActivityAddPhoto>()
             } else {
-                //There was an error,
-                //networkState.postValue(NetworkState(Status.ERROR, error))
-                Log.e("DEBUG PARSE", "Failed to complete sign up process. Error message: ${error.message} Error code ${error.code}")
+                Log.e(
+                    "DEBUG PARSE",
+                    "Failed to complete sign up process. Error message: ${error.message} Error code ${error.code}"
+                )
                 logInParseErrorAlertDialog()
             }
         }
@@ -96,39 +111,21 @@ class ActivityRegister : AppCompatActivity() {
 
     }
 
-    private fun logInEmptyAlertDialog() {
+    private fun signUpErrorAlertDialog(message: String) {
         val builder = AlertDialog.Builder(this)
 
         // Set the alert dialog title
-        builder.setTitle("Error de Inicio de Sesión")
+        builder.setTitle("Error de registro de usuario")
 
         // Display a message on alert dialog
-        builder.setMessage("Favor de ingresar todos los campos.")
+        builder.setMessage(
+            "${
+            message
+            }."
+        )
 
         // Set a positive button and its click listener on alert dialog
         builder.setPositiveButton("OK") { _, _ ->
-            Toast.makeText(this, "Revisa y vuelve a presionar el boton...", Toast.LENGTH_SHORT)
-                .show()
-        }
-
-        // Finally, make the alert dialog using builder
-        val dialog: AlertDialog = builder.create()
-
-        // Display the alert dialog on app interface
-        dialog.show()
-    }
-
-    private fun logInPasswordAlertDialog() {
-        val builder = AlertDialog.Builder(this)
-
-        // Set the alert dialog title
-        builder.setTitle("Error de Inicio de Sesión")
-
-        // Display a message on alert dialog
-        builder.setMessage("Las contraseñas no son iguales.")
-
-        // Set a positive button and its click listener on alert dialog
-        builder.setPositiveButton("OK") { dialog, which ->
             Toast.makeText(this, "Revisa y vuelve a presionar el boton...", Toast.LENGTH_SHORT)
                 .show()
         }
@@ -160,6 +157,23 @@ class ActivityRegister : AppCompatActivity() {
 
         // Display the alert dialog on app interface
         dialog.show()
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        //A valid e-mail address pattern
+        val emailPattern = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$"
+        val emailRegex = Regex(emailPattern)
+        return emailRegex.matches(email)
+    }
+
+    private fun isValidPassword(password: String): Boolean {
+        //6 to 14 character password requiring numbers and both lowercase and uppercase letters
+        val passwordPattern = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,14}\$"
+
+        //6 to 10 character password
+        //val passwordPattern = "^(?=.*[a-z]).{6,10}\$"
+        val passwordRegex = Regex(passwordPattern)
+        return passwordRegex.matches(password)
     }
 
 }
