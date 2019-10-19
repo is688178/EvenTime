@@ -89,8 +89,8 @@ class ActivityRegister : AppCompatActivity() {
 
         val parseUser = ParseUser()
         parseUser.apply {
-            setUsername(strUser)
-            setEmail(strEmail)
+            username = strUser
+            email = strEmail
             setPassword(strPassword)
         }
 
