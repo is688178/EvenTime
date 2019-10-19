@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
+import com.example.eventime.activities.activities.ActivityEventDetails
 import com.example.eventime.activities.adapters.AdapterRecyclerViewCategories
 import com.example.eventime.activities.adapters.AdapterRecyclerViewEvents
 import com.example.eventime.activities.beans.*
@@ -19,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.item_category.view.*
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.startActivity
 import kotlin.collections.ArrayList
 
 class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener {
@@ -94,19 +96,15 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         val dates = ArrayList<EventDate>()
         dates.add(EventDate("12/12/2019", hours))
 
-        val event1 = Event("Aerosmith concert", Location("Auditorio Telmex"), "", "",
-            dates, ArrayList(), "")
-        val event2 = Event("Chivas vs Puebla", Location("Estadio Akron"), "", "",
-            ArrayList(), ArrayList(), "")
-        val event3 = Event("Feria de la birria", Location("Centro"), "", "",
+        val event = Event("Aerosmith concert", Location("Auditorio Telmex"), "", "",
             dates, ArrayList(), "")
 
         val events = ArrayList<Event>()
-        events.add(event1)
-        events.add(event2)
-        events.add(event3)
-        events.add(event1)
-        events.add(event1)
+        events.add(event)
+        events.add(event)
+        events.add(event)
+        events.add(event)
+        events.add(event)
 
         rvEvents.adapter = AdapterRecyclerViewEvents(events, this)
         rvEvents.layoutManager = LinearLayoutManager(container)
@@ -128,7 +126,8 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
                     selectedCategoryView = view
                 }
             } rvEvents -> {
-                Toast.makeText(container, "Event!", Toast.LENGTH_SHORT).show()
+                startActivity<ActivityEventDetails>()
+                //Toast.makeText(container, "Event!", Toast.LENGTH_SHORT).show()
             }
         }
     }
