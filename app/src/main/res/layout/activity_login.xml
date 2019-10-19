@@ -27,32 +27,26 @@
             app:layout_constraintBottom_toTopOf="@+id/activity_login_tl_username"
             app:layout_constraintVertical_chainStyle="spread" />
 
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/activity_login_tl_username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="55dp"
-            android:layout_marginBottom="5dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_login_tv_eventime"
-            app:layout_constraintBottom_toTopOf="@id/activity_login_tl_password">
+            app:layout_constraintBottom_toTopOf="@id/activity_login_tl_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/activity_login_tiet_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:hint="@string/email"
+                android:inputType="textEmailAddress"
                 android:textColor="@color/textColorBlue"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                />
-
+                app:layout_constraintStart_toStartOf="parent"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
