@@ -1,5 +1,7 @@
 package com.example.eventime.activities.activities
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -7,15 +9,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.eventime.R
+import com.bumptech.glide.Glide
 import com.example.eventime.activities.adapters.AdapterRecyclerViewComments
 import com.example.eventime.activities.adapters.AdapterSimpleItemHorizontal
-import com.example.eventime.activities.beans.Comment
-import com.example.eventime.activities.beans.Person
+import com.example.eventime.activities.beans.*
 import com.example.eventime.activities.listeners.ClickListener
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.jetbrains.anko.find
+import android.graphics.drawable.Drawable
+import com.bumptech.glide.request.target.DrawableImageViewTarget
+import com.bumptech.glide.request.target.SimpleTarget
+import com.example.eventime.R
 
 class ActivityEventDetails : AppCompatActivity(), ClickListener {
 
@@ -30,15 +35,27 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
     private lateinit var selectedDate: String
     private var selectedDateView: View? = null
 
+    private lateinit var event: Event
+    private lateinit var dates: ArrayList<EventDate>
+    private lateinit var hours: ArrayList<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_details)
 
         bindViews()
+        val extras = intent.extras
+        if (extras != null) {
+            val event = extras.getString("eventName")!!
+            setValues(event)
+        }
+
         setupToolbar()
         setupDatesRecyclerView()
         setupHoursRecyclerView()
         setupCommentsRecyclerView()
+
+
     }
 
     private fun bindViews() {
@@ -60,13 +77,67 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
+    private fun setValues(eventName: String) {
+        val hours = ArrayList<String>()
+        hours.add("10:00 pm")
+        val dates = ArrayList<EventDate>()
+        dates.add(EventDate("12/12/2019", hours))
+
+        val event1 = Event("Aerosmith concert", Location("Auditorio Telmex"), R.drawable.concert, "Es un concierto",
+            dates, ArrayList(), "Musica")
+
+        val event2 = Event("Exposición de arte", Location("Casa de la cultura"), R.drawable.concert, "Exposición de pinturas",
+            dates, ArrayList(), "Cultural")
+
+        val event3 = Event("Feria de la birria", Location("Centro"), R.drawable.concert2, "Birria de la buena!",
+            dates, ArrayList(), "Gastronomia")
+
+        this.event = when (eventName) {
+            event1.name -> {
+                event1
+            } event2.name-> {
+                event2
+            } else -> {
+                event3
+            }
+        }
+
+        collapsingToolbar.title = event.name
+
+        //collapsingToolbar.background = drawableFromURL(event.image)
+        collapsingToolbar.background = getDrawable(event.image)
+        tvDescription.text = event.description
+        tvLocation.text = event.location.name
+
+        this.dates = dates
+        this.hours = hours
+    }
+/*
+    @Throws(java.net.MalformedURLException::class, java.io.IOException::class)
+    fun drawableFromURL(url: String): Drawable {
+        val yourURLStr = "http://host.com
+        val url = java.net.URL(yourURLStr)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.setRequestProperty("User-agent", "Mozilla/4.0")
+
+        connection.connect()
+        val input = connection.inputStream
+
+        return Drawable.createFromStream(input, "skdlsk")
+    }*/
+
     private fun setupDatesRecyclerView() {
+        /*val dates = ArrayList<String>()
+        dates.add("12/12/2019")
+        dates.add("12/12/2019")
+        dates.add("12/12/2019")
+        dates.add("12/12/2019")
+        dates.add("12/12/2019")*/
+
         val dates = ArrayList<String>()
-        dates.add("12/12/2019")
-        dates.add("12/12/2019")
-        dates.add("12/12/2019")
-        dates.add("12/12/2019")
-        dates.add("12/12/2019")
+        this.dates.forEach {
+            dates.add(it.date)
+        }
 
         rvDates.adapter = AdapterSimpleItemHorizontal(dates, this)
         val lmDates = LinearLayoutManager(this)
@@ -75,10 +146,10 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
     }
 
     private fun setupHoursRecyclerView() {
-        val hours = ArrayList<String>()
+        /*val hours = ArrayList<String>()
         hours.add("10:00 pm")
         hours.add("10:00 pm")
-        hours.add("10:00 pm")
+        hours.add("10:00 pm")*/
 
         rvHours.adapter = AdapterSimpleItemHorizontal(hours, this)
         val lmHours = LinearLayoutManager(this)
