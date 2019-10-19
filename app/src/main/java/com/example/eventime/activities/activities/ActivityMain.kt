@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.eventime.R
 import com.example.eventime.activities.fragments.FragmentCalendar
 import com.example.eventime.activities.fragments.FragmentEvents
+import com.example.eventime.activities.fragments.FragmentProfile
 import com.example.eventime.activities.fragments.FragmentSugestedEvents
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.jetbrains.anko.find
@@ -42,6 +43,7 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
         fragments.add(FragmentEvents())
         fragments.add(FragmentCalendar())
         fragments.add(FragmentSugestedEvents())
+        fragments.add(FragmentProfile())
         //add fragments to array
 
         setFragment()
@@ -64,9 +66,9 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
                 AGENDA_FRAGMENT
             }R.id.action_main_show_sugested_events -> {
                 SUGESTED_EVENTS_FRAGMENT
-            } /*R.id.action_main_show_profile -> {
+            } R.id.action_main_show_profile -> {
                 PROFILE_FRAGMENT
-            } */else -> {
+            } else -> {
                 EVENTS_FRAGMENT
             }
         }
