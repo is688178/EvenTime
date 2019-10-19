@@ -5,7 +5,7 @@ data class Event(
     val location: Location,
         /*val nextDate: String,
         val nextHour: String,*/
-        val image: String,
+        val image: Int,
     val description: String,
     val dates: ArrayList<EventDate>,
     val comments: ArrayList<Comment>,

@@ -16,10 +16,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.activities.ActivityEventDetails"
+        <activity android:name=".activities.activities.ActivityCreatePublicEvent"
+            android:parentActivityName=".activities.activities.ActivityMain"
             android:screenOrientation="portrait"
-            android:theme="@style/NoActionBar"
-            android:parentActivityName=".activities.activities.ActivityMain"/>
+            android:theme="@style/NoActionBar"/>
+        <activity
+            android:name=".activities.activities.ActivityEventDetails"
+            android:parentActivityName=".activities.activities.ActivityMain"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar" />
         <activity android:name=".activities.activities.ActivityRegister" />
         <activity
             android:name=".activities.activities.ActivityMain"

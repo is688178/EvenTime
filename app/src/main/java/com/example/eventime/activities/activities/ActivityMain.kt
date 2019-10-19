@@ -1,13 +1,20 @@
 package com.example.eventime.activities.activities
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.eventime.R
 import com.example.eventime.activities.fragments.FragmentEvents
+import com.example.eventime.activities.fragments.FragmentSugestedEvents
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.jetbrains.anko.find
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -23,6 +30,7 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
         const val PROFILE_FRAGMENT = 3
     }
 
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -31,6 +39,8 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
         bttmNav.setOnNavigationItemSelectedListener(this)
 
         fragments.add(FragmentEvents())
+        fragments.add(FragmentEvents())
+        fragments.add(FragmentSugestedEvents())
         //add fragments to array
 
         setFragment()
@@ -51,9 +61,9 @@ class ActivityMain: AppCompatActivity(), BottomNavigationView.OnNavigationItemSe
                 EVENTS_FRAGMENT
             } /*R.id.action_main_show_agenda -> {
                 AGENDA_FRAGMENT
-            } R.id.action_main_show_sugested_events -> {
+            } */R.id.action_main_show_sugested_events -> {
                 SUGESTED_EVENTS_FRAGMENT
-            } R.id.action_main_show_profile -> {
+            } /*R.id.action_main_show_profile -> {
                 PROFILE_FRAGMENT
             } */else -> {
                 EVENTS_FRAGMENT
