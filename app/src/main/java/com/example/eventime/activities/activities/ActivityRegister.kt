@@ -1,5 +1,6 @@
 package com.example.eventime.activities.activities
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.eventime.R
+import com.example.eventime.activities.config.SESSION_ID_KEY
+import com.example.eventime.activities.config.SHARED_PREFERENCES
 import org.jetbrains.anko.find
 import org.jetbrains.anko.startActivity
 import com.parse.*
@@ -107,6 +110,7 @@ class ActivityRegister : AppCompatActivity() {
             if (error == null) {
                 //Sign up successful
                 Log.d("PARSE", "Sign up successful user: $strUser")
+                saveSessionToken(parseUser.sessionToken)
                 startActivity<ActivityAddPhoto>()
             } else {
                 Log.e(
@@ -129,11 +133,7 @@ class ActivityRegister : AppCompatActivity() {
         builder.setTitle(title)
 
         // Display a message on alert dialog
-        builder.setMessage(
-            "${
-            message
-            }."
-        )
+        builder.setMessage(message)
 
         // Set a positive button and its click listener on alert dialog
         builder.setPositiveButton("OK") { _, _ ->
@@ -165,4 +165,10 @@ class ActivityRegister : AppCompatActivity() {
         return passwordRegex.matches(password)
     }
 
+    private fun saveSessionToken(sessionToken: String) {
+        val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(SESSION_ID_KEY, sessionToken)
+        editor.apply()
+    }
 }

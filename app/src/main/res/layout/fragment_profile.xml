@@ -30,6 +30,19 @@
                 android:textSize="30sp"
                 android:textColor="@color/colorWhite"
                 />
+
+            <Button
+                android:id="@+id/fragment_profile_btn_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cerrar Sesión"
+                android:textSize="20sp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/user_name_tv"
+                android:layout_centerHorizontal="true"
+                />
+
+
         </RelativeLayout>
 
     <RelativeLayout
