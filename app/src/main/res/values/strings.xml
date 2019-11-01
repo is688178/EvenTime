@@ -21,16 +21,16 @@
     <string name="main_bottom_nav_it_profile">Perfil</string>
 
     <string name="tab_title_events_today">Hoy</string>
-    <string name="tab_title_events_on_week">En la semana</string>
-    <string name="tab_title_events_weekend">Fin de semana</string>
+    <string name="tab_title_events_this_week">Esta semana</string>
+    <string name="tab_title_events_next_week">Proxima semana</string>
 
     <string name="activity_event_details_tv_location">Ubicación</string>
     <string name="activity_event_details_tv_dates">Fechas</string>
     <string name="activity_event_details_tv_pick_date">Seleccione una fecha para ver sus horarios</string>
     <string name="activity_event_details_tv_hours">Horas</string>
     <string name="activity_event_details_tv_pick_hour">Seleccione un horario para confirmar su asistencia</string>
-    <string name="activity_event_details_tv_comments">Comentarios</string>
     <string name="activity_event_details_tv_comments_subtitle">Mira lo que otras personas están diciendo</string>
+    <string name="activity_event_details_tv_comments">Comentarios</string>
 
     <string name="alert_dialog_confirm_event_assistance_tv_title">Confirme su asistencia al evento:</string>
     <string name="alert_dialog_confirm_event_assistance_tv_date">Fecha:</string>
@@ -38,5 +38,19 @@
     <string name="cancel_text">Cancelar</string>
     <string name="alert_dialog_confirm_event_assistance_btn_confirm">Confirmar</string>
 
+    <string name="activity_create_public_event_toolbar_title">Nuevo evento</string>
+    <string name="activity_create_public_event_name_hint">Nombre</string>
+    <string name="activity_create_public_event_description_hint">Descripción</string>
+    <string name="activity_create_public_event_location_hint">Ubicación</string>
+    <string name="activity_create_public_event_dates">Fechas</string>
+    <string name="activity_create_public_event_hours">Horarios</string>
+
     <string name="lorem_ipsum">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="activity_create_public_event__btn_add_date">Agregar</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_sugested_events_title">Tienes tiempo para estos eventos, aprovecha!</string>
+    <string name="no_events_found_text">No se encontraron eventos</string>
+    <string name="next">Continuar</string>
 </resources>
