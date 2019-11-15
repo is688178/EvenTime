@@ -1,4 +1,4 @@
-package com.example.eventime.activities.activities
+package com.example.eventime.activities.activities.main
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.eventime.R
+import com.example.eventime.activities.activities.ActivityLogin
 import com.example.eventime.activities.config.SESSION_ID_KEY
 import com.example.eventime.activities.config.SHARED_PREFERENCES
 import com.example.eventime.activities.fragments.FragmentCalendar
@@ -26,7 +27,8 @@ class ActivityMain: AppCompatActivity(),
     private lateinit var bttmNav: BottomNavigationView
 
     private var fragments = ArrayList<Fragment>()
-    private var currentFragment = EVENTS_FRAGMENT
+    private var currentFragment =
+        EVENTS_FRAGMENT
 
     companion object {
         const val EVENTS_FRAGMENT = 0
@@ -50,6 +52,13 @@ class ActivityMain: AppCompatActivity(),
         //add fragments to array
 
         setFragment()
+
+        /*val date = Calendar.getInstance()
+        date.set(2018, 11, 21)
+        val eventObj = ParseObject("EventDate")
+        eventObj.put("date", date.time)
+        eventObj.put("startDate", true)
+        eventObj.saveInBackground()*/
     }
 
     private fun setFragment(/*item: MenuItem*/) {
