@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import com.example.eventime.R
 import com.example.eventime.activities.config.SESSION_ID_KEY
 import com.example.eventime.activities.config.SHARED_PREFERENCES
+import com.example.eventime.activities.activities.main.ActivityMain
 import com.parse.ParseInstallation
 import com.parse.ParseUser
 import org.jetbrains.anko.*

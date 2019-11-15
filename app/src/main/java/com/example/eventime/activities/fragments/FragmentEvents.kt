@@ -1,9 +1,9 @@
 package com.example.eventime.activities.fragments
 
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,23 +12,23 @@ import android.widget.ViewAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
-import com.example.eventime.activities.activities.ActivityCreatePublicEvent
+import com.example.eventime.activities.activities.create_public_event.ActivityCreatePublicEvent
 import com.example.eventime.activities.activities.ActivityEventDetails
+import com.example.eventime.activities.activities.main.ContractMain
+import com.example.eventime.activities.activities.main.PresenterMain
 import com.example.eventime.activities.adapters.AdapterRecyclerViewCategories
 import com.example.eventime.activities.adapters.AdapterRecyclerViewEvents
 import com.example.eventime.activities.beans.*
 import com.example.eventime.activities.listeners.ClickListener
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.item_category.view.*
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.collections.ArrayList
 
-class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener {
+class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener, ContractMain.View {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var rvCategories: RecyclerView
@@ -36,9 +36,10 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     private lateinit var rvEvents: RecyclerView
     private lateinit var fabAddEvent: FloatingActionButton
 
-    private var categories = ArrayList<String>()
-    private lateinit var selectedCategory: String
-    private var selectedCategoryView: View? = null
+    private var categories = ArrayList<Category>()
+    private lateinit var categoriesAdapter: AdapterRecyclerViewCategories
+    private lateinit var selectedCategory: Category
+    /*private var selectedCategoryView: View? = null*/
 
     private lateinit var adapterRvEvents: AdapterRecyclerViewEvents
 
@@ -49,11 +50,13 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         const val THIS_WEEK_TAB = 1
         const val NEXT_WEEK_TAB = 2
 
+        //const val SHOW_PROGRESS_BAR = 0
         const val SHOW_EVENTS = 0
         const val SHOW_NO_EVENTS_FOUNT = 1
     }
 
-    private val events = ArrayList<Event>()
+    private var events = ArrayList<Event>()
+    private val presenter = PresenterMain(this)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_events, container, false)
@@ -61,8 +64,10 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         this.containerContext = container!!.context
         bindViews(view)
         setupTabLayout()
-        setupCategoriesRecyclerView()
-        setupEventsRecyclerView()
+        //setupEventsRecyclerView()
+
+        presenter.fetchCategories()
+        presenter.fetchEvents()
 
         fabAddEvent.setOnClickListener(this)
 
@@ -88,54 +93,69 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     }
 
     private fun setupCategoriesRecyclerView() {
-        //FETCH CATEGORIES??? --- STATIC CATEGORIES???
-
-        categories = ArrayList<String>()
-        categories.add("Todos")
-        categories.add("Musica")
-        categories.add("Deportes")
-        categories.add("Gastronomia")
-        categories.add("Cultural")
-        categories.add("Social")
-        categories.add("Familia")
-
-        selectedCategory = categories[0]
-
-        rvCategories.adapter = AdapterRecyclerViewCategories(categories, this)
+        categoriesAdapter = AdapterRecyclerViewCategories(categories, this)
+        rvCategories.adapter = categoriesAdapter
         val lmCategories = LinearLayoutManager(containerContext)
         lmCategories.orientation = LinearLayoutManager.HORIZONTAL
         rvCategories.layoutManager = lmCategories
     }
 
-    @SuppressLint("NewApi")
     private fun setupEventsRecyclerView() {
         //FETCH EVENTS
 
-        val hours = ArrayList<String>()
+        /*val hours = ArrayList<String>()
         hours.add("10:00 pm")
         val dates = ArrayList<EventDate>()
-        dates.add(EventDate((LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).toString(), hours))
+        dates.add(EventDate(null, Calendar.getInstance(), false, ArrayList()))
+        //dates.add(EventDate((LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).toString(), hours))
 
-        val event = Event("Aerosmith concert", Location("Auditorio Telmex"), R.drawable.concert, "Es un concierto",
-            dates, ArrayList(), "Musica")
+        val category = Category(null, "Musica", null, false)
+        val currentDate = Calendar.getInstance()
+        val person = Person(null,"Uriel", "Jiménez", null)
+        val event1 = Event(null,"Aerosmith concert", Location("Auditorio Telmex", 123.0, 132.0),
+            null, "Es un concierto", dates, currentDate, category,
+            false, person, null, null, null)
 
-        val event2 = Event("Exposición de arte", Location("Casa de la cultura"), R.drawable.concert, "Exposición de pinturas",
-            dates, ArrayList(), "Cultural")
+        val event2 = Event(null,"Exposición de arte", Location("Casa de la cultura",123.0, 132.0),
+            null, "Exposición de pinturas", dates, currentDate, category,
+            false, person, null, null, null)
 
-        dates.add(EventDate("24/10/2019", hours))
-        val event3 = Event("Feria de la birria", Location("Centro"), R.drawable.concert2, "Birria de la buena!",
-            dates, ArrayList(), "Gastronomia")
+        val event3 = Event(null,"Feria de la birria", Location("Centro", 123.0, 132.0),
+            null, "Birria de la buena!", dates, currentDate, category,
+            false, person, null, null, null)
 
         //events = ArrayList<Event>()
-        events.add(event)
-        events.add(event)
+        events.add(event1)
+        events.add(event1)
         events.add(event2)
         events.add(event3)
         events.add(event3)
 
-        adapterRvEvents = AdapterRecyclerViewEvents(events, this, false, null)
+        val v = events*/
+
+        adapterRvEvents = AdapterRecyclerViewEvents(events, this, false)
         rvEvents.adapter = adapterRvEvents
         rvEvents.layoutManager = LinearLayoutManager(containerContext)
+    }
+
+    //VIEW INTERFACE IMPLEMENTATION
+
+
+    override fun fillCategories(cat: ArrayList<Category>) {
+        categories = cat
+        setupCategoriesRecyclerView()
+        selectedCategory = categories[0]
+        categories[0].selected = true
+    }
+
+    override fun showEvents(ev: ArrayList<Event>) {
+        this.events = ev
+        setupEventsRecyclerView()
+        vaSwitcher.displayedChild = SHOW_EVENTS
+    }
+
+    override fun showNoEventsFound() {
+        vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
     }
 
     //LISTENERS
@@ -144,14 +164,20 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         when (view.parent) {
             rvCategories -> {
                 if (selectedCategory != categories[index]) {
+                    categories[categories.indexOf(selectedCategory)].selected = false
+                    categories[index].selected = true
                     selectedCategory = categories[index]
-                    if (selectedCategoryView != null) {
+                    //selectedCategory.selected = true
+                    categoriesAdapter.notifyDataSetChanged()
+
+
+                    /*if (selectedCategoryView != null) {
                         selectedCategoryView?.item_category_iv_category_icon?.background =
                             containerContext.getDrawable(R.drawable.background_dark_gray_circle_category)
                     }
                     view.item_category_iv_category_icon.background =
                         containerContext.getDrawable(R.drawable.background_white_circle_category)
-                    selectedCategoryView = view
+                    selectedCategoryView = view*/
 
                     /*if (adapterRvEvents.filterEventsCategory(selectedCategory)) {
                         vaSwitcher.displayedChild = SHOW_EVENTS

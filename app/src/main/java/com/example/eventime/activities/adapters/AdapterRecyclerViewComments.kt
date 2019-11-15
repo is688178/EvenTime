@@ -44,12 +44,12 @@ class CommentViewHolder(private val view: View, private val clickListener: Click
     fun bind(comment: Comment) {
         /*Glide
             .with(view.context)
-            .load(comment.person.photo)
+            .load(comment.person.image)
             .circleCrop()
             .into(ivPersonPhoto)*/
 
         tvPersonName.text = "${comment.person.name} ${comment.person.lastname}"
-        tvCommentDate.text = comment.date
+        //tvCommentDate.text = DateHourUtils.formatDateToShowFormat()
         rbEventRating.rating = comment.eventRating.toFloat()
         //tvCommentDescription.text = comment.description
     }

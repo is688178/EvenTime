@@ -46,34 +46,43 @@ class FragmentSugestedEvents : Fragment(), ClickListener {
         val hours = ArrayList<String>()
         hours.add("10:00 pm")
         val dates = ArrayList<EventDate>()
-        dates.add(EventDate("12/12/2019", hours))
+        /*dates.add(EventDate("12/12/2019", hours))
         val event = Event("Aerosmith concert", Location("Auditorio Telmex"), R.drawable.concert, "Es un concierto",
-            dates, ArrayList(), "Musica")
+            dates, ArrayList(), "Musica", true)
 
         val event2 = Event("Exposición de arte", Location("Casa de la cultura"), R.drawable.concert, "Exposición de pinturas",
-            dates, ArrayList(), "Cultural")
+            dates, ArrayList(), "Cultural", true)
 
         val event3 = Event("Feria de la birria", Location("Centro"), R.drawable.concert, "Birria de la buena!",
-            dates, ArrayList(), "Gastronomia")
+            dates, ArrayList(), "Gastronomia", true)
+
+        val aevent = Event("Aerosmith concert", Location("Auditorio Telmex"), R.drawable.concert, "Es un concierto",
+            dates, ArrayList(), "Musica", false)
+
+        val aevent2 = Event("Exposición de arte", Location("Casa de la cultura"), R.drawable.concert, "Exposición de pinturas",
+            dates, ArrayList(), "Cultural", false)
+
+        val aevent3 = Event("Feria de la birria", Location("Centro"), R.drawable.concert, "Birria de la buena!",
+            dates, ArrayList(), "Gastronomia", false)
 
 
         events.add(event)
-        events.add(event)
-        events.add(event)
-        events.add(event)
+        events.add(aevent)
+        events.add(aevent)
+        events.add(aevent)
         events.add(event2)
-        events.add(event2)
-        events.add(event2)
-        events.add(event2)
-        events.add(event2)
-        events.add(event2)
+        events.add(aevent2)
+        events.add(aevent2)
+        events.add(aevent2)
+        events.add(aevent2)
+        events.add(aevent2)
         events.add(event3)
-        events.add(event3)
-        events.add(event3)
+        events.add(aevent3)
+        events.add(aevent3)*/
 
 
 
-        var lastCategory = ""
+        /*var lastCategory = ""
         val itemTypes = ArrayList<Int>()
 
         events.forEach {
@@ -83,10 +92,10 @@ class FragmentSugestedEvents : Fragment(), ClickListener {
             } else {
                 itemTypes.add(AdapterRecyclerViewEvents.EVENT_ITEM)
             }
-        }
+        }*/
 
-        rvEvents.adapter = AdapterRecyclerViewEvents(events, this, true, itemTypes)
-        rvEvents.layoutManager = LinearLayoutManager(containerContext)
+        //rvEvents.adapter = AdapterRecyclerViewEvents(events, this, true)
+        //rvEvents.layoutManager = LinearLayoutManager(containerContext)
     }
 
     override fun onClick(view: View, index: Int) {

@@ -1,13 +1,20 @@
 package com.example.eventime.activities.utils
 
-import java.text.SimpleDateFormat
+import android.util.Log
 import java.util.*
-import kotlin.collections.HashMap
+import kotlin.collections.ArrayList
 
-class FormatDateHour {
+class DateHourUtils {
     companion object {
-        private val sdf = SimpleDateFormat("dd/MM/yyyy")
-        private val sdf2 = SimpleDateFormat("yyyy-MM-dd")
+        const val PREVIOUS_HOUR = -1
+        const val LATER_HOUR = 1
+        const val SAME_HOUR = 0
+        const val PREVIOUS_DATE = -1
+        const val LATER_DATE = 1
+        const val SAME_DATE = 0
+
+        /*private val sdf = SimpleDateFormat("dd/MM/yyyy")
+        private val sdf2 = SimpleDateFormat("yyyy-MM-dd")*/
 
         private const val ZERO = "0"
         private const val SLASH = "/"
@@ -15,11 +22,11 @@ class FormatDateHour {
         private const val AM = "am"
         private const val PM = "pm"
 
-        const val DAY = "day"
+        /*const val DAY = "day"
         const val MONTH = "month"
-        const val YEAR = "year"
+        const val YEAR = "year"*/
 
-        fun formatDateToShowFormat(day: Int, month: Int, year: Int) : String {
+        /*fun formatDateToShowFormat(day: Int, month: Int, year: Int) : String {
             /*val cMonth = month + 1
             val formattedDay = if (day < 10) "$ZERO$day" else day
             val formattedMonth = if (cMonth < 10) "$ZERO$cMonth" else cMonth
@@ -29,7 +36,7 @@ class FormatDateHour {
             val dateStr = parseDate(day, month, year)
 
             return sdf.format(dateStr)
-        }
+        }*/
 
         /*fun formatHourToShowFormat(hour: Int, minute: Int) : String {
             var cHour = hour
@@ -43,21 +50,9 @@ class FormatDateHour {
             return "$formattedHour$COLON$formattedMinute $period"
         }*/
 
-        fun formatHourToShowFormat(time: Calendar) : String {
-            val hour = time.get(Calendar.HOUR)
-            val minute = time.get(Calendar.MINUTE)
-            var cHour = hour
-            var period = AM
-            if (hour > 12) {
-                period = PM
-                cHour = hour - 12
-            }
-            val formattedHour = if (cHour < 10) "$ZERO$cHour" else cHour
-            val formattedMinute = if (minute < 10) "$ZERO$minute" else minute.toString()
-            return "$formattedHour$COLON$formattedMinute $period"
-        }
 
-        fun parseDate(day:Int, month:Int, year:Int) : Date {
+
+        /*fun parseDate(day:Int, month:Int, year:Int) : Date {
             val cMonth = month + 1
             val formattedDay = if (day < 10) "$ZERO$day" else day
             val formattedMonth = if (cMonth < 10) "$ZERO$cMonth" else cMonth
@@ -76,6 +71,135 @@ class FormatDateHour {
                 return null
             }
             return values
+        }*/
+
+        //------------------------------------------------
+
+        fun createDateFromString(dateStr: String) : Calendar {
+            val values = dateStr.split('/')
+            val day = values[0].toInt()
+            val month = values[1].toInt() - 1
+            val year = values[2].toInt()
+
+            val date = Calendar.getInstance()
+            date.set(year, month, day)
+            return date
+        }
+
+        fun formatDateToShowFormat(cal: Calendar) : String {
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+            val month = cal.get(Calendar.MONTH)
+            val year = cal.get(Calendar.YEAR)
+
+            val cMonth = month + 1
+            val formattedDay = if (day < 10) "$ZERO$day" else day
+            val formattedMonth = if (cMonth < 10) "$ZERO$cMonth" else cMonth
+
+            return "$formattedDay$SLASH$formattedMonth$SLASH$year"
+        }
+
+        fun formatHourToShowFormat(cal: Calendar) : String {
+            val hour = cal.get(Calendar.HOUR_OF_DAY)
+            val minute = cal.get(Calendar.MINUTE)
+            var cHour = hour
+            var period = AM
+            if (hour > 12) {
+                period = PM
+                cHour = hour - 12
+            }
+            val formattedHour = if (cHour < 10) "$ZERO$cHour" else cHour
+            val formattedMinute = if (minute < 10) "$ZERO$minute" else minute.toString()
+            return "$formattedHour$COLON$formattedMinute $period"
+        }
+
+        fun formatHourToString(cal: Calendar) : String {
+            val hour = cal.get(Calendar.HOUR_OF_DAY)
+            val minute = cal.get(Calendar.MINUTE)
+
+            return "$hour$COLON$minute"
+        }
+        
+        fun compareHours(hourC1: Calendar, hourC2: Calendar) : Int {
+            val hour1 = hourC1.get(Calendar.HOUR_OF_DAY)
+            val minute1 = hourC1.get(Calendar.MINUTE)
+            val hour2 = hourC2.get(Calendar.HOUR_OF_DAY)
+            val minute2 = hourC2.get(Calendar.MINUTE)
+
+            if (hour1 > hour2 || (hour1 == hour2 && minute1 > minute2))
+                return LATER_HOUR
+            if (hour1 < hour2 || (hour1 == hour2 && minute1 < minute2))
+                return PREVIOUS_HOUR
+            return SAME_HOUR
+        }
+
+        fun joinHoursToString(hours: ArrayList<Calendar>, showFormat: Boolean) : String {
+            var hoursStr = ""
+            if (showFormat) {
+                hours.forEach { hour ->
+                    hoursStr += "${formatHourToShowFormat(hour)}, "
+                }
+                hoursStr = hoursStr.substring(0, hoursStr.length - 2)
+            } else {
+                hours.forEach { hour ->
+                    hoursStr += "${formatHourToString(hour)},"
+                }
+                hoursStr = hoursStr.substring(0, hoursStr.length - 1)
+            }
+            return hoursStr
+        }
+
+        fun splitHoursToArrayList(hoursStr: String) : ArrayList<Calendar> {
+            val hours = ArrayList<Calendar>()
+            hoursStr.split(',').forEach {hourStr ->
+                val values = hourStr.split(':')
+                val cal = Calendar.getInstance()
+                cal.set(Calendar.HOUR_OF_DAY, values[0].toInt())
+                cal.set(Calendar.MINUTE, values[1].toInt())
+                hours.add(cal)
+            }
+            return hours
+        }
+
+        fun compareDates(dateC1: Calendar, dateC2: Calendar) : Int {
+            val year1 = dateC1.get(Calendar.YEAR)
+            val month1 = dateC1.get(Calendar.MONTH)
+            val day1 = dateC1.get(Calendar.DAY_OF_MONTH)
+            val year2 = dateC2.get(Calendar.YEAR)
+            val month2 = dateC2.get(Calendar.MONTH)
+            val day2 = dateC2.get(Calendar.DAY_OF_MONTH)
+
+            if (year1 > year2 || (year1 == year2 && month1 > month2) ||
+                    (year1 == year2 && month1 == month2 && day1 > day2)) {
+                return LATER_DATE
+            } else if (year1 < year2 || (year1 == year2 && month1 < month2) ||
+                    (year1 == year2 && month1 == month2 && day1 < day2)) {
+                return PREVIOUS_DATE
+            }
+            return SAME_DATE
+        }
+
+        fun joinDatesToString(dates: ArrayList<Calendar>) : String {
+            var datesStr = ""
+            if (dates.isNotEmpty()) {
+                dates.forEach { hour ->
+                    datesStr += "${formatDateToShowFormat(hour)},"
+                }
+                datesStr = datesStr.substring(0, datesStr.length - 1)
+            }
+            return datesStr
+        }
+
+        fun splitDatesToArrayList(datesStr: String) : ArrayList<Calendar> {
+            val dates = ArrayList<Calendar>()
+            datesStr.split(',').forEach { hourStr ->
+                val values = hourStr.split('/')
+                val cal = Calendar.getInstance()
+                cal.set(Calendar.DAY_OF_MONTH, values[0].toInt())
+                cal.set(Calendar.MONTH, values[1].toInt() - 1)
+                cal.set(Calendar.YEAR, values[2].toInt())
+                dates.add(cal)
+            }
+            return dates
         }
     }
 }

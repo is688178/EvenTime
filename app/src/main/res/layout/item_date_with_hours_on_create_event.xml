@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp">
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_date_with_hours_on_create_event_tv_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="12/12/2019"
+        android:textStyle="bold"
+        android:layout_marginBottom="10dp"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hours_text"
+        android:textStyle="bold"
+        android:layout_marginStart="10dp"/>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_date_with_hours_on_create_event_tv_hours"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="04:00 pm, 05:00pm, 11:00pm"
+        android:layout_marginStart="10dp"/>
 </LinearLayout>

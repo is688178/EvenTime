@@ -1,8 +1,10 @@
-package com.example.eventime.activities.activities.CreatePublicEvent
+package com.example.eventime.activities.activities.create_public_event
 
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,23 +20,41 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.eventime.R
 import com.example.eventime.activities.activities.ActivitySelectDateHours
 import com.example.eventime.activities.adapters.AdapterRecyclerViewCreateEventDatesHours
+import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.beans.Event
 import com.example.eventime.activities.beans.EventDate
 import com.example.eventime.activities.beans.Location
 import com.example.eventime.activities.listeners.ClickListener
 import com.example.eventime.activities.messages.Message
 import com.example.eventime.activities.messages.ValidationError
+import com.example.eventime.activities.utils.DateHourUtils
+import com.example.eventime.activities.utils.ParseFileConvert
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.textfield.TextInputLayout
+import com.parse.ParseFile
+import com.parse.ParseGeoPoint
+import com.parse.ParseObject
 import org.jetbrains.anko.find
+import java.io.File
+import java.io.InputStream
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
-class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, DialogInterface.OnClickListener,
-        ContractCreatePublicEvent.View {
+class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
+    DialogInterface.OnClickListener,
+    ContractCreatePublicEvent.View {
 
     private lateinit var clRoot: CoordinatorLayout
     private lateinit var collapsingToolbar: CollapsingToolbarLayout
@@ -43,17 +63,20 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
     private lateinit var etName: EditText
     private lateinit var etCategoriesSp: EditText
     private lateinit var etDescription: EditText
+    private lateinit var tilLocation: TextInputLayout
     private lateinit var etLocation: EditText
     private lateinit var rvDates: RecyclerView
     private lateinit var adapterEventDatesHours: AdapterRecyclerViewCreateEventDatesHours
     private lateinit var btnAddDate: ImageButton
 
-    private var categories: Array<String> = arrayOf("Deportes", "Musica", "Gastronomia")
+    //private var categories: Array<String> = arrayOf("Deportes", "Musica", "Gastronomia")
+    private lateinit var categories: ArrayList<Category>
 
     private lateinit var event: Event
+    private lateinit var eventCategory: Category
     private lateinit var location: Location
     private var dates = ArrayList<EventDate>()
-    private lateinit var photo: Drawable
+    private var photo: Bitmap? = null
     private lateinit var values: HashMap<String, String>
 
     private val presenter = PresenterCreatePublicEvent(this)
@@ -65,7 +88,7 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
         const val CATEGORY = "category"
 
         const val SELECT_HOUR_REQUEST = 1000
-        const val PLACE_PICKER_REQUEST = 1100
+        const val AUTOCOMPLETE_REQUEST = 1100
         const val PICK_PHOTO_REQUEST = 1200
     }
 
@@ -77,7 +100,7 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
         setupToolbar()
         setOnClickListeners()
         setupRecyclerViewDates()
-        fillCategoriesField()
+        presenter.fetchCategories()
     }
 
     private fun bindViews() {
@@ -88,6 +111,7 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
         etName = find(R.id.activity_create_public_event_et_name)
         etCategoriesSp = find(R.id.activity_create_public_event_et_categories_sp)
         etDescription = find(R.id.activity_create_public_event_et_description)
+        tilLocation = find(R.id.activity_create_public_event_til_location)
         etLocation = find(R.id.activity_create_public_event_et_location)
         rvDates = find(R.id.activity_create_public_event_rv_dates)
         btnAddDate = find(R.id.activity_create_public_event_btn_add_date)
@@ -107,24 +131,24 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
         btnAddDate.setOnClickListener(this)
     }
 
-    private fun fillCategoriesField() {
-        //Fetch categories
-        etCategoriesSp.setText(categories[0])
-    }
-
     private fun setupRecyclerViewDates() {
-        adapterEventDatesHours = AdapterRecyclerViewCreateEventDatesHours(dates, object: ClickListener {
-            override fun onClick(view: View, index: Int) {
-                Toast.makeText(view.context, "Click Date", Toast.LENGTH_SHORT).show()
-            }
-        })
+        adapterEventDatesHours =
+            AdapterRecyclerViewCreateEventDatesHours(dates, object : ClickListener {
+                override fun onClick(view: View, index: Int) {
+                    Toast.makeText(view.context, "Click Date", Toast.LENGTH_SHORT).show()
+                }
+            })
         rvDates.adapter = adapterEventDatesHours
         rvDates.layoutManager = LinearLayoutManager(this)
 
-        val itemTouchHelperCallback = object: ItemTouchHelper.SimpleCallback(0,
-            ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-                                target: RecyclerView.ViewHolder): Boolean {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
                 return true
             }
 
@@ -138,9 +162,12 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
         itemTouchHelper.attachToRecyclerView(rvDates)
     }
 
-    private fun showCategoriesAlerDialog() {
+    private fun showCategoriesAlertDialog() {
+        val categoriesStr = categories.map { category ->
+            category.name
+        }
         MaterialAlertDialogBuilder(this)
-            .setItems(categories, this)
+            .setItems(categoriesStr.toTypedArray(), this)
             .show()
     }
 
@@ -162,10 +189,21 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
                 if (validateValues()) {
                     Toast.makeText(this, "save", Toast.LENGTH_LONG).show()
                     event = Event(
+                        null,
                         values[NAME]!!,
                         location,
-                        ""
+                        photo,
+                        values[DESCRIPTION]!!,
+                        dates,
+                        Calendar.getInstance(),
+                        eventCategory,
+                        false,
+                        null,
+                        null,
+                        null,
+                        null
                     )
+                    event.parseFileImage = ParseFileConvert.provideParseImageFile(photo!!)
                     presenter.saveEvent(event)
                     finish()
                 }
@@ -178,7 +216,7 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
     private fun validateValues(): Boolean {
         values = getValues()
 
-        if(!emptyValues(values) || dates.isEmpty()) {
+        if (emptyValues(values) || dates.isEmpty()) {
             Message.showValidationErrorMessage(this, ValidationError.MISSING_DATA)
             return false
         }
@@ -209,26 +247,43 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
         //-------------------------------------
     }
 
+    override fun fillCategoriesField(categories: ArrayList<Category>) {
+        this.categories = categories
+        eventCategory = categories[0]
+        etCategoriesSp.setText(eventCategory.name)
+    }
+
     //LISTENERS
 
     override fun onClick(view: View?) {
         when (view!!.id) {
             fabAddPhoto.id -> {
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+                val intent =
+                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
                 startActivityForResult(intent, PICK_PHOTO_REQUEST)
-            } etCategoriesSp.id -> {
-                showCategoriesAlerDialog()
+            }
+            etCategoriesSp.id -> {
+                showCategoriesAlertDialog()
                 hideKeyBoardClearFocus(view)
-            } etLocation.id -> {
-                /*val intent = Intent(this, MapsActivity::class.java)
-                startActivityForResult(intent, PLACE_PICKER_REQUEST)*/
-                /*Places.initialize(this, getString(R.string.google_maps_key))
-                val placesClient = Places.createClient(this)
-                //placesClient.*/
-            } btnAddDate.id -> {
-                val datesStr = dates.map { date -> date.date }
-                val datesStrJoin = datesStr.joinToString()
-                val intent = Intent(this, ActivitySelectDateHours:: class.java)
+            }
+            etLocation.id -> {
+                if (!Places.isInitialized()) {
+                    Places.initialize(applicationContext, getString(R.string.google_maps_key))
+                }
+
+                val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+                val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                    .build(this)
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST)
+            }
+            btnAddDate.id -> {
+                //val datesStr = dates.map { date -> date.date }
+                //val datesStrJoin = datesStr.joinToString()
+                val datesC = dates.map { eventDate ->
+                    eventDate.date
+                }
+                val datesStrJoin = DateHourUtils.joinDatesToString(ArrayList(datesC))
+                val intent = Intent(this, ActivitySelectDateHours::class.java)
                 if (datesStrJoin.isNotEmpty())
                     intent.putExtra(ActivitySelectDateHours.DATES, datesStrJoin)
                 startActivityForResult(intent, SELECT_HOUR_REQUEST)
@@ -237,41 +292,43 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener, Dia
     }
 
     override fun onClick(view: DialogInterface?, index: Int) {
-        etCategoriesSp.setText(categories[index])
+        eventCategory = categories[index]
+        etCategoriesSp.setText(categories[index].name)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            SELECT_HOUR_REQUEST -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val extras = data!!.extras
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            when (requestCode) {
+                SELECT_HOUR_REQUEST -> {
+                    val extras = data.extras
                     if (extras != null) {
-                        val date = extras.getString(ActivitySelectDateHours.DATE)!!
+                        val dateStr = extras.getString(ActivitySelectDateHours.DATE)!!
                         val hoursStr = extras.getString(ActivitySelectDateHours.HOURS)!!
-                        val hours = ArrayList<String>()
-                        hoursStr.split(",").toCollection(hours)
+                        val date = DateHourUtils.createDateFromString(dateStr)
+                        val hours = DateHourUtils.splitHoursToArrayList(hoursStr)
 
-                        dates.add(EventDate(date, hours))
+                        dates.add(EventDate(null, date, false, hours))
                         adapterEventDatesHours.notifyDataSetChanged()
                     }
                 }
-            } PLACE_PICKER_REQUEST -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val extras = data!!.extras
+                AUTOCOMPLETE_REQUEST -> {
+                    val extras = data.extras
                     if (extras != null) {
-                        /*val place = PlacePicker.getPlace(data, this)
-                        Log.d("PLACEABC", place.name.toString())
-                        Log.d("LATLNG", place.latLng.toString())
-                        //val latitude: String = place.latLng*/
-                        location = Location("asd")
+                        val place = Autocomplete.getPlaceFromIntent(data)
+                        etLocation.setText(place.name)
+                        location = Location(
+                            place.name!!,
+                            place.latLng!!.latitude,
+                            place.latLng!!.longitude
+                        )
                     }
                 }
-            } PICK_PHOTO_REQUEST -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    val imageUri = data?.data
+                PICK_PHOTO_REQUEST -> {
+                    val imageUri = data.data
                     val inpStream = contentResolver.openInputStream(imageUri!!)
-                    photo = Drawable.createFromStream(inpStream, "")
-                    collapsingToolbar.contentScrim = photo
+                    val inpStream2 = contentResolver.openInputStream(imageUri)
+                    collapsingToolbar.background = Drawable.createFromStream(inpStream, "")
+                    photo = BitmapFactory.decodeStream(inpStream2)
                 }
             }
         }

@@ -37,7 +37,6 @@ class ActivityMain: AppCompatActivity(),
         const val PROFILE_FRAGMENT = 3
     }
 
-    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

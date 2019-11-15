@@ -1,26 +1,30 @@
 package com.example.eventime.activities.activities
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.eventime.activities.adapters.AdapterRecyclerViewComments
-import com.example.eventime.activities.adapters.AdapterSimpleItemHorizontal
+import com.example.eventime.activities.adapters.AdapterSimpleDateHourHorizontal
 import com.example.eventime.activities.beans.*
 import com.example.eventime.activities.listeners.ClickListener
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.jetbrains.anko.find
-import android.graphics.drawable.Drawable
-import com.bumptech.glide.request.target.DrawableImageViewTarget
-import com.bumptech.glide.request.target.SimpleTarget
 import com.example.eventime.R
+import com.parse.ParseObject
+import java.io.File
+import java.net.URI
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ActivityEventDetails : AppCompatActivity(), ClickListener {
 
@@ -37,8 +41,9 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
 
     private lateinit var event: Event
     private lateinit var dates: ArrayList<EventDate>
-    private lateinit var hours: ArrayList<String>
+    private lateinit var hours: ArrayList<Calendar>
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_event_details)
@@ -54,8 +59,6 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
         setupDatesRecyclerView()
         setupHoursRecyclerView()
         setupCommentsRecyclerView()
-
-
     }
 
     private fun bindViews() {
@@ -68,9 +71,10 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
         rvComments = find(R.id.activity_event_details_rv_comments)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun setupToolbar() {
-        collapsingToolbar.setCollapsedTitleTextColor(resources.getColor(R.color.colorWhite))
-        collapsingToolbar.setExpandedTitleColor(resources.getColor(R.color.colorWhite))
+        collapsingToolbar.setCollapsedTitleTextColor(getColor(R.color.colorWhite))
+        collapsingToolbar.setExpandedTitleColor(getColor(R.color.colorWhite))
         //collapsingToolbar.setStatusBarScrimColor(resources.getColor(R.color.color_black))
         setSupportActionBar(toolbar)
         supportActionBar?.title = "Aerosmith concert"
@@ -78,19 +82,29 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
     }
 
     private fun setValues(eventName: String) {
-        val hours = ArrayList<String>()
-        hours.add("10:00 pm")
+        val v = Calendar.getInstance()
+        v.set(Calendar.HOUR, 10)
+        val hours = ArrayList<Calendar>()
+        hours.add(v)
         val dates = ArrayList<EventDate>()
-        dates.add(EventDate("12/12/2019", hours))
+        dates.add(EventDate(null, Calendar.getInstance(), false, hours))
 
-        val event1 = Event("Aerosmith concert", Location("Auditorio Telmex"), R.drawable.concert, "Es un concierto",
-            dates, ArrayList(), "Musica")
+        val currentDate = Calendar.getInstance()
+        Log.d("CURRENTDATE", currentDate.toString())
 
-        val event2 = Event("Exposición de arte", Location("Casa de la cultura"), R.drawable.concert, "Exposición de pinturas",
-            dates, ArrayList(), "Cultural")
+        val category = Category(null, "Musica", null,false)
+        val person = Person(null,"Uriel", "Jiménez", null)
+        val event1 = Event(null,"Aerosmith concert", Location("Auditorio Telmex", 123.0, 132.0),
+            null, "Es un concierto", dates, currentDate, category,
+            false, person, null, null, null)
 
-        val event3 = Event("Feria de la birria", Location("Centro"), R.drawable.concert2, "Birria de la buena!",
-            dates, ArrayList(), "Gastronomia")
+        val event2 = Event(null,"Exposición de arte", Location("Casa de la cultura", 123.0, 132.0),
+            null, "Exposición de pinturas", dates, currentDate, category,
+            false, person, null, null, null)
+
+        val event3 = Event(null,"Feria de la birria", Location("Centro", 123.0, 132.0),
+            null, "Birria de la buena!", dates, currentDate, category,
+            false, person, null, null, null)
 
         this.event = when (eventName) {
             event1.name -> {
@@ -105,9 +119,9 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
         collapsingToolbar.title = event.name
 
         //collapsingToolbar.background = drawableFromURL(event.image)
-        collapsingToolbar.background = getDrawable(event.image)
+        //collapsingToolbar.background = Drawa
         tvDescription.text = event.description
-        tvLocation.text = event.location.name
+        tvLocation.text = event.location!!.name
 
         this.dates = dates
         this.hours = hours
@@ -134,12 +148,12 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
         dates.add("12/12/2019")
         dates.add("12/12/2019")*/
 
-        val dates = ArrayList<String>()
-        this.dates.forEach {
-            dates.add(it.date)
+        val datesC = ArrayList<Calendar>()
+        dates.forEach {eventDate ->
+            datesC.add(eventDate.date)
         }
 
-        rvDates.adapter = AdapterSimpleItemHorizontal(dates, this)
+        rvDates.adapter = AdapterSimpleDateHourHorizontal(datesC, true, this)
         val lmDates = LinearLayoutManager(this)
         lmDates.orientation = LinearLayoutManager.HORIZONTAL
         rvDates.layoutManager = lmDates
@@ -151,15 +165,16 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
         hours.add("10:00 pm")
         hours.add("10:00 pm")*/
 
-        rvHours.adapter = AdapterSimpleItemHorizontal(hours, this)
+        rvHours.adapter = AdapterSimpleDateHourHorizontal(hours, false,this)
         val lmHours = LinearLayoutManager(this)
         lmHours.orientation = LinearLayoutManager.HORIZONTAL
         rvHours.layoutManager = lmHours
     }
 
     private fun setupCommentsRecyclerView() {
-        val comment = Comment(Person("Antonio", "Santana", ""), 3,
-            "12/04/2019", "")
+        val person = Person(null, "Antonio", "Santana", null)
+        val comment = Comment(null, person, 3, Calendar.getInstance(), "Hola")
+            //"12/04/2019", "")
         val comments = ArrayList<Comment>()
         comments.add(comment)
         comments.add(comment)

@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
 import com.example.eventime.activities.beans.Event
 import com.example.eventime.activities.listeners.ClickListener
+import com.example.eventime.activities.utils.DateHourUtils
 import org.jetbrains.anko.find
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.collections.ArrayList
 
 class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private val clickListener: ClickListener,
-                                private val sugested: Boolean, private val itemTypes: ArrayList<Int>?) :
+                                private val suggested: Boolean) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var eventsCopy = ArrayList(events)
@@ -24,10 +25,10 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
 
     companion object {
         const val EVENT_ITEM = 0
-        const val CATEGORY_ITEM = 1
+        const val EVENT_CATEGORY_ITEM = 1
 
         const val NO_FILTER = 0
-        const val CATERORY_FILTER = 1
+        const val CATEGORY_FILTER = 1
         const val DATE_FILTER = 2
 
         const val TODAY_FILTER = 3
@@ -40,29 +41,25 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
     private var filterApplied = NO_FILTER
 
     override fun getItemViewType(position: Int): Int {
-        return if (sugested) {
-            itemTypes!![position]
+        return if (suggested && events[position].firstOfCategory!!) {
+            EVENT_CATEGORY_ITEM
         } else {
             EVENT_ITEM
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (sugested && viewType == CATEGORY_ITEM) {
+        return if (suggested && viewType == EVENT_CATEGORY_ITEM) {
             val view = LayoutInflater.from(parent.context).inflate(
-                R.layout.item_sugested_event_category_title,
-                parent, false
-            )
-            SugestedEventCategoryViewHolder(view)
+                R.layout.item_event_with_category_title,
+                parent, false)
+            EventCategoryViewHolder(view, clickListener)
         } else {
             val view = LayoutInflater.from(parent.context).inflate(
                 R.layout.item_event, parent,
-                false
-            )
+                false)
             EventViewHolder(view, clickListener)
         }
-
-
     }
 
     override fun getItemCount(): Int = events.size
@@ -70,7 +67,7 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is EventViewHolder) {
             holder.bind(events[position])
-        } else if (holder is SugestedEventCategoryViewHolder) {
+        } else if (holder is EventCategoryViewHolder) {
             holder.bind(events[position])
         }
     }
@@ -85,16 +82,16 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
             return true
         }
 
-        if (filterApplied != NO_FILTER && filterApplied != CATERORY_FILTER) {
+        if (filterApplied != NO_FILTER && filterApplied != CATEGORY_FILTER) {
             for (event in filteredEvents) {
-                if (event.category == category) {
+                if (event.category!!.name == category) {
                     events.add(event)
                 }
             }
-            filterApplied = CATERORY_FILTER
+            filterApplied = CATEGORY_FILTER
         } else {
             for (event in eventsCopy) {
-                if (event.category == category) {
+                if (event.category!!.name == category) {
                     events.add(event)
                 }
             }
@@ -132,7 +129,7 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
 
         if (filterApplied != NO_FILTER && filterApplied != DATE_FILTER) {
             for (event in filteredEvents) {
-                val eventDate = LocalDate.parse(event.dates[0].date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                val eventDate = LocalDate.parse(event.dates[0].date.toString(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                 if (eventDate in initDate..finDate) {
                     events.add(event)
                 }
@@ -140,7 +137,7 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
             filterApplied = DATE_FILTER
         } else {
             for (event in eventsCopy) {
-                val eventDate = LocalDate.parse(event.dates[0].date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                val eventDate = LocalDate.parse(event.dates[0].date.toString(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                 if (eventDate in initDate..finDate) {
                     events.add(event)
                 }
@@ -184,15 +181,17 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
     }
 }
 
-class SugestedEventCategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    private var tvCategoryName: TextView = view.find(R.id.item_sugested_event_category_tv_category)
+class EventCategoryViewHolder(view: View, clickListener: ClickListener):  EventViewHolder(view, clickListener) {
+    private var tvCategoryName: TextView = view.find(R.id.item_event_with_category_title_tv_category)
 
-    fun bind(event: Event) {
-        tvCategoryName.text = event.category
+    override fun bind(event: Event) {
+        tvCategoryName.text = event.category!!.name
+
+        super.bind(event)
     }
 }
 
-class EventViewHolder(private val view: View, private val clickListener: ClickListener) :
+open class EventViewHolder(private val view: View, private val clickListener: ClickListener) :
     RecyclerView.ViewHolder(view),
     View.OnClickListener {
     private var flContent: FrameLayout = view.find(R.id.item_event_fl_content)
@@ -204,13 +203,14 @@ class EventViewHolder(private val view: View, private val clickListener: ClickLi
         view.setOnClickListener(this)
     }
 
-    @SuppressLint("NewApi")
-    fun bind(event: Event) {
-        flContent.background = view.context.getDrawable(event.image)
+    open fun bind(event: Event) {
+        //flContent.background = view.context.getDrawable(event.image)
         eventTitle.text = event.name
-        eventLocationName.text = event.location.name
-        val eventDate = LocalDate.parse(event.dates[0].date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        eventDateHour.text = "${eventDate.dayOfMonth} ${eventDate.month} ${event.dates[0].hours[0]}"
+        eventLocationName.text = event.location!!.name
+        /*val eventDate = event.dates[0].date
+        eventDateHour.text = "${DateHourUtils.formatDateToShowFormat(eventDate)} " +
+                "${DateHourUtils.formatHourToShowFormat(eventDate)}"*/
+        eventDateHour.text = "Something"
     }
 
     override fun onClick(view: View?) {
