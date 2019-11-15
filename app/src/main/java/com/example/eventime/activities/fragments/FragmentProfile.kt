@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.eventime.R
-import com.example.eventime.activities.activities.LogoutListener
+import com.example.eventime.activities.activities.main.LogoutListener
 import com.parse.ParseFile
 import com.parse.ParseUser
 import org.jetbrains.anko.find
