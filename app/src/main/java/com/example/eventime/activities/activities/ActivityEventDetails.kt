@@ -1,7 +1,5 @@
 package com.example.eventime.activities.activities
 
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -20,9 +18,6 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.jetbrains.anko.find
 import com.example.eventime.R
-import com.parse.ParseObject
-import java.io.File
-import java.net.URI
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -186,8 +181,8 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
         rvComments.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun showAlertDialogConfimation(index: Int) {
-        val alertDialog = MaterialAlertDialogBuilder(this)
+    private fun showAlertDialogConfimation() {
+        MaterialAlertDialogBuilder(this)
             .setView(R.layout.alert_dialog_confirm_event_assistance)
             .show()
 
@@ -202,7 +197,7 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
             rvDates -> {
                 Toast.makeText(this, "DATES LISTENER", Toast.LENGTH_LONG).show()
             } rvHours ->{
-                showAlertDialogConfimation(index)
+                showAlertDialogConfimation()
             }
         }
     }

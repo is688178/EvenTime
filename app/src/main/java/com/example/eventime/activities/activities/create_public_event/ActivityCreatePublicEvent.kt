@@ -17,6 +17,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,6 +45,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.parse.ParseFile
 import com.parse.ParseGeoPoint
 import com.parse.ParseObject
+import org.jetbrains.anko.db.NULL
 import org.jetbrains.anko.find
 import java.io.File
 import java.io.InputStream
@@ -118,8 +120,18 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun setupToolbar() {
-        collapsingToolbar.setCollapsedTitleTextColor(resources.getColor(R.color.colorWhite))
-        collapsingToolbar.setExpandedTitleColor(resources.getColor(R.color.colorWhite))
+        collapsingToolbar.setCollapsedTitleTextColor(
+            ContextCompat.getColor(
+                applicationContext,
+                R.color.colorWhite
+            )
+        )
+        collapsingToolbar.setExpandedTitleColor(
+            ContextCompat.getColor(
+                applicationContext,
+                R.color.colorWhite
+            )
+        )
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
@@ -203,7 +215,8 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
                         null,
                         null
                     )
-                    event.parseFileImage = ParseFileConvert.provideParseImageFile(photo!!)
+                    if (photo != null)
+                        event.parseFileImage = ParseFileConvert.provideParseImageFile(photo!!)
                     presenter.saveEvent(event)
                     finish()
                 }

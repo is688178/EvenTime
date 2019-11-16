@@ -159,8 +159,6 @@ class ActivitySelectDateHours : AppCompatActivity(), View.OnClickListener {
         //VALIDATE IF HOUR ALREADY EXISTS
         dates.forEach{date ->
             Log.d("FOREACH", "asd")
-            val v = date
-            val d = dateToSet
             if (DateHourUtils.compareDates(date, dateToSet) == DateHourUtils.SAME_DATE) {
                 if (showMessage)
                     Message.showValidationErrorMessage(this, ValidationError.DATE_ALREADY_EXISTS)

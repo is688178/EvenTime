@@ -3,7 +3,6 @@ package com.example.eventime.activities.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +24,6 @@ import com.google.android.material.tabs.TabLayout
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
-import java.util.*
 import kotlin.collections.ArrayList
 
 class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener, ContractMain.View {
@@ -141,15 +139,15 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     //VIEW INTERFACE IMPLEMENTATION
 
 
-    override fun fillCategories(cat: ArrayList<Category>) {
-        categories = cat
+    override fun fillCategories(categories: ArrayList<Category>) {
+        this.categories = categories
         setupCategoriesRecyclerView()
-        selectedCategory = categories[0]
-        categories[0].selected = true
+        selectedCategory = this.categories[0]
+        this.categories[0].selected = true
     }
 
-    override fun showEvents(ev: ArrayList<Event>) {
-        this.events = ev
+    override fun showEvents(events: ArrayList<Event>) {
+        this.events = events
         setupEventsRecyclerView()
         vaSwitcher.displayedChild = SHOW_EVENTS
     }

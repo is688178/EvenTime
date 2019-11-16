@@ -10,10 +10,15 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.eventime.R
 import com.example.eventime.activities.activities.main.LogoutListener
+import com.example.eventime.activities.adapters.AdapterPublicEvent
 import com.parse.ParseFile
+import com.parse.ParseObject
+import com.parse.ParseQuery
 import com.parse.ParseUser
 import org.jetbrains.anko.find
 import org.jetbrains.anko.image
@@ -25,6 +30,7 @@ class FragmentProfile : Fragment(), View.OnClickListener {
     private lateinit var mUserName: TextView
     private lateinit var mImageView: ImageView
     private lateinit var mCloseSession: Button
+    private lateinit var mRecyclerView: RecyclerView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -47,10 +53,12 @@ class FragmentProfile : Fragment(), View.OnClickListener {
         mUserName = view.find(R.id.fragment_profile_tv_user_name)
         mCloseSession = view.find(R.id.fragment_profile_btn_logout)
         mImageView = view.find(R.id.ic_user)
+        mRecyclerView = view.find(R.id.fragment_profile_rv_userCreatedEvents)
 
         serUserImage()
         setUserName()
         setUserEmail()
+        setUserCreatedEvents(view)
         mCloseSession.setOnClickListener(this)
 
         return view
@@ -93,5 +101,20 @@ class FragmentProfile : Fragment(), View.OnClickListener {
                 Log.e("DEBUG User Email", exception.message.toString())
             }
         }
+    }
+
+    private fun setUserCreatedEvents(view: View){
+        val query = ParseQuery.getQuery<ParseObject>("Event")
+
+        val user = ParseUser.getCurrentUser()
+
+        // To only show events where the used who created them is the current user
+        query.whereEqualTo("Person", user)
+
+        query.findInBackground { objects, _ ->
+            mRecyclerView.adapter = AdapterPublicEvent(objects)
+            mRecyclerView.layoutManager = LinearLayoutManager(view.context)
+        }
+
     }
 }

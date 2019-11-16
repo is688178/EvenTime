@@ -33,7 +33,7 @@ class FragmentCalendar : Fragment(){
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(com.example.eventime.R.layout.fragment_calendar_event, container, false)
         this.container = container!!.context
-        view.calendar.setOnDateChangeListener{ view, year, month, dayOfMonth ->
+        view.calendar.setOnDateChangeListener{ _, year, month, dayOfMonth ->
             // Note that months are indexed from 0. So, 0 means January, 1 means february, 2 means march etc.
             msg = ("$dayOfMonth-"+(month + 1)+"-$year")
             beginTime = Calendar.getInstance()
