@@ -1,6 +1,5 @@
 package com.example.eventime.activities.fragments
 
-
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,18 +9,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
-import com.example.eventime.activities.activities.ActivityEventDetails
 import com.example.eventime.activities.adapters.AdapterPublicEvent
-import com.example.eventime.activities.adapters.AdapterRecyclerViewEvents
-import com.example.eventime.activities.beans.Event
-import com.example.eventime.activities.beans.EventDate
-import com.example.eventime.activities.beans.Location
 import com.example.eventime.activities.listeners.ClickListener
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import org.jetbrains.anko.find
-import org.jetbrains.anko.support.v4.intentFor
-import org.jetbrains.anko.support.v4.startActivity
 
 class FragmentSugestedEvents : Fragment(), ClickListener {
 
@@ -42,6 +34,7 @@ class FragmentSugestedEvents : Fragment(), ClickListener {
         query.findInBackground { objects, _ ->
 
             //I have the EventDate relation with Event but still need to exclude unnecesary events
+            println(objects.toString())
 
             mRecyclerView.adapter = AdapterPublicEvent(objects)
             mRecyclerView.layoutManager = LinearLayoutManager(view.context)

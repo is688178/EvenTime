@@ -21,7 +21,6 @@ import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser
 import org.jetbrains.anko.find
-import org.jetbrains.anko.image
 
 class FragmentProfile : Fragment(), View.OnClickListener {
     private lateinit var listener: LogoutListener
@@ -104,17 +103,28 @@ class FragmentProfile : Fragment(), View.OnClickListener {
     }
 
     private fun setUserCreatedEvents(view: View){
-        val query = ParseQuery.getQuery<ParseObject>("Event")
-
-        val user = ParseUser.getCurrentUser()
-
-        // To only show events where the used who created them is the current user
-        query.whereEqualTo("Person", user)
-
+        val query = ParseQuery.getQuery<ParseObject>("EventDate")
+        query.include("Event")
         query.findInBackground { objects, _ ->
+
+            // Removing event not created by the user
+            val userId = ParseUser.getCurrentUser().objectId
+            val eventsToRemove = arrayListOf<ParseObject>()
+            for(o in objects){
+                val event = o["Event"] as ParseObject
+                val eventUser = event["Person"] as ParseUser
+                if(eventUser.objectId != userId)
+                    eventsToRemove.add(o)
+            }
+
+            for(o in eventsToRemove)
+                objects.remove(o)
+
             mRecyclerView.adapter = AdapterPublicEvent(objects)
             mRecyclerView.layoutManager = LinearLayoutManager(view.context)
         }
 
     }
+
+
 }

@@ -14,7 +14,7 @@ import com.parse.ParseObject
 class AdapterPublicEvent (private val events: List<ParseObject>): RecyclerView.Adapter<NameViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NameViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event_parse, parent, false)
         return NameViewHolder(view)
     }
 
@@ -27,15 +27,16 @@ class AdapterPublicEvent (private val events: List<ParseObject>): RecyclerView.A
 
 class NameViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
     private val image: ImageView = view.findViewById(R.id.item_event_parse_iv_photo)
-    private val title: TextView = view.findViewById(R.id.item_event_tv_event_title)
-    private val date: TextView = view.findViewById(R.id.item_event_tv_event_date_hour)
-    private val location: TextView = view.findViewById(R.id.item_event_tv_event_location_name)
+    private val title: TextView = view.findViewById(R.id.item_event_parse_tv_title)
+    private val date: TextView = view.findViewById(R.id.item_event_parse_tv_date_hour)
+    private val location: TextView = view.findViewById(R.id.item_event_tv_event_parse_location)
 
     fun bind(po: ParseObject) {
-        val parseFile: ParseFile = po.get("image") as ParseFile
+        val event = po.get("Event") as ParseObject
+        val parseFile: ParseFile = event.get("image") as ParseFile
         Glide.with(view).load(parseFile.url).into(image)
-        title.text = po["name"] as String
+        title.text = event["name"] as String
         date.text = po["date"].toString()
-        location.text = po["locationName"] as String
+        location.text = event["locationName"] as String
     }
 }

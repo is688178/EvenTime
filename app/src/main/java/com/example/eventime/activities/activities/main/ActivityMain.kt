@@ -39,6 +39,7 @@ class ActivityMain: AppCompatActivity(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.supportActionBar?.hide() //hide the title bar
         setContentView(R.layout.activity_main)
 
         bttmNav = find(R.id.activity_main_bttm_nav)
