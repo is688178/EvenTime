@@ -69,4 +69,12 @@
 
 
     <string name="title_activity_maps">Map</string>
+    <string name="ActivityPrivateEventTitle">Agendar nuevo evento</string>
+    <string name="horario">Horario:</string>
+    <string name="StartHour">Horario Inicio:</string>
+    <string name="createPrivateEventEndTitle">Finaliza:</string>
+    <string name="StartTime"><![CDATA[<Horario Inicio>]]></string>
+    <string name="EndTime"><![CDATA[<Fin>]]></string>
+    <string name="Date">Fecha</string>
+    <string name="fecha"><![CDATA[<Fecha>]]></string>
 </resources>
