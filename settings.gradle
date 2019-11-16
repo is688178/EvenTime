@@ -1,2 +1,3 @@
-include ':app'
+include ':app', ':librar'
 rootProject.name='EvenTime'
+project(':librar').projectDir = new File('library')
