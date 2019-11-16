@@ -24,9 +24,6 @@ class AdapterRecyclerViewCategories(private val categories: ArrayList<String>, p
         holder.bind(categories[position])
     }
 
-    fun asd(){
-
-    }
 }
 
 class CategoryViewHolder(view: View, private val clickListener: ClickListener): RecyclerView.ViewHolder(view),

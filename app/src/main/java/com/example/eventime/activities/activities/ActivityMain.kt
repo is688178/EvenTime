@@ -10,10 +10,13 @@ import com.example.eventime.R
 import com.example.eventime.activities.config.SESSION_ID_KEY
 import com.example.eventime.activities.config.SHARED_PREFERENCES
 import com.example.eventime.activities.fragments.FragmentCalendar
+//import com.example.eventime.activities.fragments.FragmentCa
 import com.example.eventime.activities.fragments.FragmentEvents
 import com.example.eventime.activities.fragments.FragmentProfile
 import com.example.eventime.activities.fragments.FragmentSugestedEvents
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.jakewharton.threetenabp.AndroidThreeTen
+//import com.kizitonwose.calendarviewsample.FragmentCal
 import com.parse.ParseUser
 import org.jetbrains.anko.find
 import org.jetbrains.anko.startActivity
@@ -44,10 +47,12 @@ class ActivityMain: AppCompatActivity(),
         bttmNav.setOnNavigationItemSelectedListener(this)
 
         fragments.add(FragmentEvents())
-        fragments.add(FragmentCalendar())
+        fragments.add((FragmentCalendar()))
         fragments.add(FragmentSugestedEvents())
         fragments.add(FragmentProfile())
         //add fragments to array
+
+        AndroidThreeTen.init(this)
 
         setFragment()
     }
