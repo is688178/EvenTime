@@ -37,13 +37,12 @@ class FragmentSugestedEvents : Fragment(), ClickListener {
         this.containerContext = container!!.context
         mRecyclerView = view.find(R.id.fragment_sugested_events_rv_events)
 
-        val query = ParseQuery.getQuery<ParseObject>("Event")
-
-        TODO("include in query eventDate  from  another class, App is cycling in requests right now...")
-
-
-
+        val query = ParseQuery.getQuery<ParseObject>("EventDate")
+        query.include("Event")
         query.findInBackground { objects, _ ->
+
+            //I have the EventDate relation with Event but still need to exclude unnecesary events
+
             mRecyclerView.adapter = AdapterPublicEvent(objects)
             mRecyclerView.layoutManager = LinearLayoutManager(view.context)
         }
