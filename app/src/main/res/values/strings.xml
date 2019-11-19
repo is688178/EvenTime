@@ -77,4 +77,5 @@
     <string name="EndTime"><![CDATA[<Fin>]]></string>
     <string name="Date">Fecha</string>
     <string name="fecha"><![CDATA[<Fecha>]]></string>
+    <string name="save">Guardar</string>
 </resources>

@@ -65,6 +65,7 @@
         </activity>
         <activity android:name=".activities.activities.main.ActivityMain" />
         <activity android:name=".activities.activities.ActivityAddPhoto" />
+        <activity android:name=".activities.activities.create_public_event.ActivityCreatePrivateEvent" />
     </application>
 
 </manifest>

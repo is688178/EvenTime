@@ -6,7 +6,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class Message {
     companion object {
-        fun showMessage(context: Context, message: Messages) {
+        fun showMessage() {
 
         }
 

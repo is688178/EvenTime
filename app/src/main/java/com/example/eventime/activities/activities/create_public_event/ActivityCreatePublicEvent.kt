@@ -290,8 +290,6 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
                 startActivityForResult(intent, AUTOCOMPLETE_REQUEST)
             }
             btnAddDate.id -> {
-                //val datesStr = dates.map { date -> date.date }
-                //val datesStrJoin = datesStr.joinToString()
                 val datesC = dates.map { eventDate ->
                     eventDate.date
                 }

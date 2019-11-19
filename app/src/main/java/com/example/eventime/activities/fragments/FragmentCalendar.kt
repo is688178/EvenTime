@@ -5,13 +5,14 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.provider.CalendarContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.eventime.activities.activities.create_public_event.ActivityCreatePrivateEvent
 import kotlinx.android.synthetic.main.fragment_calendar_event.view.*
+import org.jetbrains.anko.support.v4.startActivity
 import java.util.*
 
 
@@ -42,14 +43,14 @@ class FragmentCalendar : Fragment(){
 
         view.fragment_calendar_add_event.setOnClickListener {
 
-            val intent = Intent(Intent.ACTION_INSERT)
+/*            val intent = Intent(Intent.ACTION_INSERT)
                 .setData(CalendarContract.Events.CONTENT_URI)
                 .putExtra(CalendarContract.Events.TITLE, "New Event")
                 .putExtra(CalendarContract.Events.EVENT_LOCATION, "Location")
                 .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime) //System.currentTimeMillis())
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)//System.currentTimeMillis() + (60*60*1000))
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)//System.currentTimeMillis() + (60*60*1000))*/
 
-            startActivity(intent)
+            startActivity<ActivityCreatePrivateEvent>()
         }
 
         return view

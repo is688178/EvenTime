@@ -14,20 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/activity_create_private_event_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:title="@string/ActivityPrivateEventTitle"
-            app:titleTextColor="@color/colorWhite" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/activity_create_private_event_tl_name"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_toolbar"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -85,7 +75,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/activity_create_private_event_tv_Date"
+            android:id="@+id/activity_create_private_event_tv_dateTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_til_location"
             android:layout_width="wrap_content"
@@ -99,7 +89,7 @@
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/activity_create_private_event_btn_add_date"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_Date"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_dateTitle"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
@@ -109,7 +99,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/activity_create_private_event_tv_date"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_Date"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_dateTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -185,6 +175,17 @@
             android:textColor="@color/colorWhite"
             android:textSize="18sp"
             android:textStyle="bold" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/activity_create_private_event_btn_save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_endTime"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_save"/>
         
         
         

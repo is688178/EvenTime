@@ -102,7 +102,7 @@ class FragmentProfile : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun setUserCreatedEvents(view: View){
+    private fun setUserCreatedEvents(view: View) {
         val query = ParseQuery.getQuery<ParseObject>("EventDate")
         query.include("Event")
         query.findInBackground { objects, _ ->
@@ -110,14 +110,15 @@ class FragmentProfile : Fragment(), View.OnClickListener {
             // Removing event not created by the user
             val userId = ParseUser.getCurrentUser().objectId
             val eventsToRemove = arrayListOf<ParseObject>()
-            for(o in objects){
+            for (o in objects) {
                 val event = o["Event"] as ParseObject
                 val eventUser = event["Person"] as ParseUser
-                if(eventUser.objectId != userId)
+                val eventIsPrivate = event["private"] as Boolean
+                if (eventUser.objectId != userId || eventIsPrivate)
                     eventsToRemove.add(o)
             }
 
-            for(o in eventsToRemove)
+            for (o in eventsToRemove)
                 objects.remove(o)
 
             mRecyclerView.adapter = AdapterPublicEvent(objects)
