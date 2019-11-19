@@ -14,8 +14,10 @@ import com.example.eventime.R
 import com.example.eventime.activities.config.SESSION_ID_KEY
 import com.example.eventime.activities.config.SHARED_PREFERENCES
 import com.example.eventime.activities.activities.main.ActivityMain
+import com.parse.ParseException
 import com.parse.ParseInstallation
 import com.parse.ParseUser
+import com.parse.SaveCallback
 import org.jetbrains.anko.*
 
 class ActivityLogin : AppCompatActivity() {
@@ -71,9 +73,6 @@ class ActivityLogin : AppCompatActivity() {
         mTextRegister.setOnClickListener {
             startActivity<ActivityRegister>()
         }
-
-        // Save the current Installation to Back4App
-        ParseInstallation.getCurrentInstallation().saveInBackground()
     }
 
     private fun saveSessionToken(sessionToken: String) {

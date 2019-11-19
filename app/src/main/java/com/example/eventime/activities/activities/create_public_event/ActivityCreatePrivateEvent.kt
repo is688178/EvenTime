@@ -115,7 +115,7 @@ class ActivityCreatePrivateEvent : AppCompatActivity(), View.OnClickListener {
                     }
 
                     savePrivateEventInParse()
-                    
+
                     finish()
 
                 } else {
