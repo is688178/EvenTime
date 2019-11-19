@@ -3,7 +3,11 @@ package com.example.eventime.activities.activities.create_public_event
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -14,12 +18,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.eventime.R
 import com.example.eventime.activities.beans.Location
+import com.example.eventime.activities.utils.ParseFileConvert.Companion.provideParseImageFile
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.parse.*
 import org.jetbrains.anko.find
+import java.io.InputStream
 import java.util.*
 
 
@@ -217,6 +223,12 @@ class ActivityCreatePrivateEvent : AppCompatActivity(), View.OnClickListener {
         parseObjectEvent.put("name", mETName.text.toString())
         parseObjectEvent.put("Person", ParseUser.getCurrentUser())
 
+        val imageStream: InputStream =
+            this.contentResolver.openInputStream(resourceToUri(this.applicationContext, R.drawable.agenda)!!)!!
+        val bitmap = BitmapFactory.decodeStream(imageStream)
+        val parseFile = provideParseImageFile(bitmap)
+        parseObjectEvent.put("image", parseFile)
+
         val geoPoint = ParseGeoPoint(location.latitude, location.longitude)
         parseObjectEvent.put("location", geoPoint)
 
@@ -251,5 +263,15 @@ class ActivityCreatePrivateEvent : AppCompatActivity(), View.OnClickListener {
             }
         })
     }
+
+    private fun resourceToUri(context: Context, resID: Int): Uri? {
+        return Uri.parse(
+            ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
+                    context.resources.getResourcePackageName(resID) + '/' +
+                    context.resources.getResourceTypeName(resID) + '/' +
+                    context.resources.getResourceEntryName(resID)
+        )
+    }
+
 
 }
