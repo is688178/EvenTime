@@ -12,7 +12,7 @@ class Message {
 
         fun showValidationErrorMessage(context: Context, message: ValidationError) {
             val stringId = when (message) {
-                ValidationError.SET_AL_LEAST_ON_HOUR -> {
+                ValidationError.SET_AL_LEAST_ONE_HOUR -> {
                     R.string.set_at_least_on_hour
                 } ValidationError.HOUR_ALREADY_EXISTS -> {
                     R.string.hour_already_exists

@@ -12,9 +12,7 @@ import android.app.DatePickerDialog
 import java.util.*
 import android.app.TimePickerDialog
 import android.content.Intent
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.eventime.R
 import com.example.eventime.activities.adapters.AdapterRecyclerViewHours
@@ -24,7 +22,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.example.eventime.activities.messages.Message
 import com.example.eventime.activities.messages.ValidationError
 import com.example.eventime.activities.utils.DateHourUtils
-import java.time.LocalDate
 
 
 class ActivitySelectDateHours : AppCompatActivity(), View.OnClickListener {
@@ -200,7 +197,7 @@ class ActivitySelectDateHours : AppCompatActivity(), View.OnClickListener {
 
     private fun answerRequest() {
         if (hours.isEmpty()) {
-            Message.showValidationErrorMessage(this, ValidationError.SET_AL_LEAST_ON_HOUR)
+            Message.showValidationErrorMessage(this, ValidationError.SET_AL_LEAST_ONE_HOUR)
         } else {
             val hoursStr = DateHourUtils.joinHoursToString(hours, false)//hours.joinToString()
             val returnIntent = Intent()

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.eventime.R
 import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.listeners.ClickListener
@@ -46,7 +47,18 @@ class CategoryViewHolder(val view: View, private val clickListener: ClickListene
         } else {
             view.context.getDrawable(R.drawable.background_dark_gray_circle_category)
         }
-        //categoryIcon.setImageURI(category.icon.path)
+        if (category.name == "Todos") {
+            Glide.with(view.context)
+                .load(R.drawable.ic_hamburger)
+                .override(80, 80)
+                .into(categoryIcon)
+        } else if (category.iconParseFile != null && category.iconWParseFile != null) {
+            val url = if(category.selected) category.iconWParseFile.url else category.iconParseFile.url
+            Glide.with(view.context)
+                .load(url)
+                .override(80, 80)
+                .into(categoryIcon)
+        }
 
 
         /*val iconUri = Uri.fromFile(category.icon)

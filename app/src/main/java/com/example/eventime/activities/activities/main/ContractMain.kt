@@ -1,5 +1,6 @@
 package com.example.eventime.activities.activities.main
 
+import android.content.Context
 import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.beans.Event
 
@@ -11,7 +12,7 @@ interface ContractMain {
     }
 
     interface Presenter {
-        fun fetchCategories()
+        fun fetchCategories(context: Context)
         fun fetchEvents()
     }
 }

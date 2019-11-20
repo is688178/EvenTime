@@ -87,7 +87,7 @@ class ActivityEventDetails : AppCompatActivity(), ClickListener {
         val currentDate = Calendar.getInstance()
         Log.d("CURRENTDATE", currentDate.toString())
 
-        val category = Category(null, "Musica", null,false)
+        val category = Category(null, "Musica", false)
         val person = Person(null,"Uriel", "Jiménez", null)
         val event1 = Event(null,"Aerosmith concert", Location("Auditorio Telmex", 123.0, 132.0),
             null, "Es un concierto", dates, currentDate, category,

@@ -107,6 +107,9 @@ class DateHourUtils {
                 period = PM
                 cHour = hour - 12
             }
+            if (cHour == 0){
+                cHour = 12
+            }
             val formattedHour = if (cHour < 10) "$ZERO$cHour" else cHour
             val formattedMinute = if (minute < 10) "$ZERO$minute" else minute.toString()
             return "$formattedHour$COLON$formattedMinute $period"
@@ -176,6 +179,13 @@ class DateHourUtils {
                 return PREVIOUS_DATE
             }
             return SAME_DATE
+        }
+
+        fun dateInRange(date: Calendar, initDate: Calendar, finDate: Calendar): Boolean {
+            val initComparison = compareDates(date, initDate)
+            val finComparison = compareDates(date, finDate)
+            return (initComparison == SAME_DATE || initComparison == LATER_DATE) &&
+                    (finComparison == SAME_DATE || finComparison == PREVIOUS_DATE)
         }
 
         fun joinDatesToString(dates: ArrayList<Calendar>) : String {
