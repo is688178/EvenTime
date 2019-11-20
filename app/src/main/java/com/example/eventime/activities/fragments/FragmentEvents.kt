@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import android.widget.ViewAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +28,10 @@ import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 import java.util.*
 import kotlin.collections.ArrayList
+import com.parse.ParseUser
+import com.parse.LogInCallback
+import com.parse.ParseACL
+
 
 class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener, ContractMain.View {
 
@@ -66,13 +71,25 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         setupTabLayout()
         //setupEventsRecyclerView()
 
-        presenter.fetchCategories()
-        presenter.fetchEvents()
+        /*ParseUser.logInInBackground("uriel", "uriel"){ parseUser, e ->
+            if (e == null) {// Hooray! The user is logged in.
+                Toast.makeText(containerContext, "Hecho", Toast.LENGTH_LONG).show()
+                val parseACL = ParseACL(parseUser)
+                parseACL.publicReadAccess = true
+
+                parseUser.setACL(parseACL)
+            } else {
+                // Signup failed. Look at the ParseException to see what happened.
+            }
+        }*/
+
+        presenter.fetchCategories(containerContext)
+        //presenter.fetchEvents()
+
 
         fabAddEvent.setOnClickListener(this)
 
         //TODAY FILTER
-        onTabSelected(tabLayout.getTabAt(0))
 
         return view
     }
@@ -152,6 +169,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         this.events = ev
         setupEventsRecyclerView()
         vaSwitcher.displayedChild = SHOW_EVENTS
+        onTabSelected(tabLayout.getTabAt(0))
     }
 
     override fun showNoEventsFound() {
@@ -163,27 +181,18 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     override fun onClick(view: View, index: Int) {
         when (view.parent) {
             rvCategories -> {
+                Toast.makeText(containerContext, "asd", Toast.LENGTH_LONG).show()
                 if (selectedCategory != categories[index]) {
                     categories[categories.indexOf(selectedCategory)].selected = false
                     categories[index].selected = true
                     selectedCategory = categories[index]
-                    //selectedCategory.selected = true
                     categoriesAdapter.notifyDataSetChanged()
 
-
-                    /*if (selectedCategoryView != null) {
-                        selectedCategoryView?.item_category_iv_category_icon?.background =
-                            containerContext.getDrawable(R.drawable.background_dark_gray_circle_category)
-                    }
-                    view.item_category_iv_category_icon.background =
-                        containerContext.getDrawable(R.drawable.background_white_circle_category)
-                    selectedCategoryView = view*/
-
-                    /*if (adapterRvEvents.filterEventsCategory(selectedCategory)) {
+                    if (adapterRvEvents.filterEventsCategory(selectedCategory)) {
                         vaSwitcher.displayedChild = SHOW_EVENTS
                     } else {
                         vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
-                    }*/
+                    }
                 }
             } rvEvents -> {
                 startActivity(intentFor<ActivityEventDetails>("eventName" to events[index].name))
@@ -201,7 +210,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        /*val dateFilter = when (tab!!.position) {
+        val dateFilter = when (tab!!.position) {
             TODAY_TAB -> {
                 AdapterRecyclerViewEvents.TODAY_FILTER
             } THIS_WEEK_TAB -> {
@@ -216,7 +225,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
             vaSwitcher.displayedChild = SHOW_EVENTS
         } else {
             vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
-        }*/
+        }
     }
     override fun onTabReselected(tab: TabLayout.Tab?) {}
     override fun onTabUnselected(tab: TabLayout.Tab?) {}

@@ -1,9 +1,13 @@
 package com.example.eventime.activities.activities.main
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.Toast
+import com.example.eventime.R
 import com.example.eventime.activities.beans.*
+import com.example.eventime.activities.utils.DateHourUtils
 import com.parse.ParseFile
 import com.parse.ParseGeoPoint
 import com.parse.ParseObject
@@ -15,7 +19,7 @@ import kotlin.collections.HashMap
 
 class PresenterMain(private val view: ContractMain.View) : ContractMain.Presenter {
 
-    override fun fetchCategories() {
+    override fun fetchCategories(context: Context) {
         val query = ParseQuery.getQuery<ParseObject>("Category")
         query.findInBackground { categories, e ->
             if (e == null) {
@@ -25,11 +29,16 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
                     return@map Category(
                         category.objectId,
                         category["name"].toString(),
-                        null,
                         false,
-                        category.getParseFile("icon")
+                        category.getParseFile("icon"),
+                        category.getParseFile("iconW")
                     )
                 }.toCollection(categoriesO)
+
+                categoriesO.add(
+                    0,
+                    Category("", "Todos")
+                )
                 view.fillCategories(categoriesO)
             } else {
                 Log.e("CATEGORIES FETCH", "Error: " + e.message)
@@ -38,6 +47,8 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
     }
 
     override fun fetchEvents() {
+        val eventsStr = HashSet<String>()
+        var count = 0
         val query = ParseQuery.getQuery<ParseObject>("Event")
         query.whereEqualTo("private", false)
         query.include("Person")
@@ -46,6 +57,7 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
             if (e == null) {
                 val eventsO = ArrayList<Event>()
                 events.map { event ->
+                    eventsStr.add(event.objectId)
                     val l = event.getParseGeoPoint("location")
                     val location = if (l != null) {
                         Location(
@@ -65,7 +77,7 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
                             p["username"].toString(),//name
                             "",
                             null,
-                            p["image"] as ParseFile
+                            p.getParseFile("image")
                         )
                     } else {
                         null
@@ -75,9 +87,8 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
                         Category(
                             c.objectId,
                             c["name"].toString(),
-                            null,
                             false,
-                            c["icon"] as ParseFile
+                            c.getParseFile("icon")
                         )
                     } else {
                         null
@@ -102,46 +113,53 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
                         event
                     )
 
-                    /*var index = 0
+                    //FETCH EVENT DATES
                     val queryDate = ParseQuery.getQuery<ParseObject>("EventDate")
                     queryDate.whereEqualTo("Event", event)
+                    //queryDate.orderByAscending("date")
                     queryDate.findInBackground { dates, e ->
                         if (e == null) {
                             val datesO = ArrayList<EventDate>()
                             val datesStr = HashSet<String>()
                             dates.forEach { dateP ->
                                 val date = dateP.getDate("date")
-                                /*if (!datesStr.contains(date)) {
+                                val cal = Calendar.getInstance()
+                                cal.time = date!!
+                                if (!datesStr.contains(DateHourUtils.formatDateToShowFormat(cal))) {
+                                    datesStr.add(DateHourUtils.formatDateToShowFormat(cal))
                                     val eventDate = EventDate(
                                         dateP.objectId,
-                                        date,
+                                        cal,
                                         false,
                                         ArrayList()
                                     )
-                                    //eventDate.hours.add(date.hou)
+                                    eventDate.hours!!.add(cal)
+                                    datesO.add(eventDate)
                                 } else {
-                                    //add hour to date
-                                }*/
+                                    val dateIndex =
+                                        datesStr.indexOf(DateHourUtils.formatDateToShowFormat(cal))
+                                    datesO[dateIndex].hours!!.add(cal)
+                                }
                             }
-                            eventsO[index].dates = datesO
+
+                            val evIndex = eventsStr.indexOf(dates[0].getParseObject("Event")!!.objectId)
+                            eventsO[evIndex].dates = datesO
+
+                            count++
+                            if (count == eventsO.size) {
+                                if (eventsO.size != 0) {
+                                    view.showEvents(eventsO)
+                                } else {
+                                    view.showNoEventsFound()
+                                }
+                            }
                         } else {
                             Log.e("EVENT DATES FETCH", "Error: " + e.message!!)
                         }
                     }
-                    index++*/
-
-
 
                     return@map eventO
                 }.toCollection(eventsO)
-
-
-
-                if (eventsO.size != 0) {
-                    view.showEvents(eventsO)
-                } else {
-                    view.showNoEventsFound()
-                }
             } else {
                 Log.e("EVENTS FETCH", "Error: " + e.message!!)
             }

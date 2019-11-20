@@ -203,7 +203,13 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
                         null,
                         null
                     )
-                    event.parseFileImage = ParseFileConvert.provideParseImageFile(photo!!)
+                    if (photo != null) {
+                        event.parseFileImage = ParseFileConvert.provideParseImageFile(photo!!)
+                    } else {
+                        //DEFAULT IMAGE
+                        event.parseFileImage = ParseFileConvert.provideParseImageFile(
+                            BitmapFactory.decodeResource(resources, R.drawable.concert2))
+                    }
                     presenter.saveEvent(event)
                     finish()
                 }

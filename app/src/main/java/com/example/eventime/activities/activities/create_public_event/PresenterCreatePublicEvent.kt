@@ -6,23 +6,32 @@ import com.example.eventime.activities.beans.Event
 import com.parse.*
 import java.util.*
 import kotlin.collections.ArrayList
+import com.parse.ParseACL
+import com.parse.ParseUser
+
+
 
 
 class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.View) :
     ContractCreatePublicEvent.Presenter {
 
     override fun saveEvent(event: Event) {
+        val currentUser = ParseUser.getCurrentUser()
+        val acl = ParseACL(currentUser)
+        acl.publicReadAccess = true
+        currentUser.acl = acl
+
         val eventObj = ParseObject("Event")
         eventObj.put("name", event.name)
         eventObj.put("description", event.description)
         eventObj.put("locationName", event.location!!.name)
         eventObj.put("location", ParseGeoPoint(event.location.latitude, event.location.longitude))
-        if (event.image != null) {
+        if (event.parseFileImage != null) {
             eventObj.put("image", event.parseFileImage!!)
         }
         eventObj.put("publicationDate", event.publicationDate.time)
         eventObj.put("private", event.privateEvent)
-        eventObj.put("Person", ParseUser.getCurrentUser())
+        eventObj.put("Person", currentUser)
         eventObj.put("Category", event.category!!.parseObject)
 
         event.dates.forEach { eventDate ->
@@ -35,7 +44,15 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
                     val hourObject = ParseObject("EventDate")
                     hourObject.put("date", date.time)
                     hourObject.put("Event", eventObj)
-                    hourObject.saveInBackground()
+                    hourObject.put("startDate", false)
+                    hourObject.saveInBackground{e ->
+                        if (e != null) {
+                            Log.e("CREATE EVENT ERR", e.message!!)
+                        } else {
+                            Log.d("CREATE EVENT", "SUCCESS")
+                        }
+
+                    }
                 }
             }
         }
@@ -50,9 +67,9 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
                     return@map Category(
                         category.objectId,
                         category["name"].toString(),
-                        null,
                         false,
-                        category.getParseFile("icon"),
+                        null,
+                        null,
                         category
                     )
                 }.toCollection(categoriesO)

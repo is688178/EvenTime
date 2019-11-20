@@ -63,8 +63,8 @@ data class Person(
 data class Category(
     val categoryId: String?,
     val name: String,
-    val icon: Bitmap?,
     var selected: Boolean = false,
-    val photoParseFile: ParseFile? = null,
+    val iconParseFile: ParseFile? = null,
+    val iconWParseFile: ParseFile? = null,
     val parseObject: ParseObject = ParseObject("")
 )
