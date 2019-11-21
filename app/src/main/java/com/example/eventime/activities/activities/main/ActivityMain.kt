@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.eventime.R
@@ -15,14 +16,16 @@ import com.example.eventime.activities.fragments.FragmentEvents
 import com.example.eventime.activities.fragments.FragmentProfile
 import com.example.eventime.activities.fragments.FragmentSugestedEvents
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.parse.FunctionCallback
+import com.parse.ParseCloud
 import com.parse.ParseUser
 import org.jetbrains.anko.find
 import org.jetbrains.anko.startActivity
 import kotlin.collections.ArrayList
 
-class ActivityMain: AppCompatActivity(),
+class ActivityMain : AppCompatActivity(),
     BottomNavigationView.OnNavigationItemSelectedListener,
-    LogoutListener  {
+    LogoutListener {
 
     private lateinit var bttmNav: BottomNavigationView
 
@@ -59,6 +62,16 @@ class ActivityMain: AppCompatActivity(),
         eventObj.put("date", date.time)
         eventObj.put("startDate", true)
         eventObj.saveInBackground()*/
+
+        // Execute ParseCloud CallFunction
+        val params = HashMap<String, String>()
+        ParseCloud.callFunctionInBackground("hello", params,
+            FunctionCallback<String> { value, e ->
+                if (e == null) {
+                    Log.d("MainActivityCourse", value.toString())
+                }
+            })
+
     }
 
     private fun setFragment(/*item: MenuItem*/) {
@@ -74,13 +87,17 @@ class ActivityMain: AppCompatActivity(),
         currentFragment = when (item.itemId) {
             R.id.action_main_show_events -> {
                 EVENTS_FRAGMENT
-            } R.id.action_main_show_agenda -> {
+            }
+            R.id.action_main_show_agenda -> {
                 AGENDA_FRAGMENT
-            }R.id.action_main_show_sugested_events -> {
+            }
+            R.id.action_main_show_sugested_events -> {
                 SUGESTED_EVENTS_FRAGMENT
-            } R.id.action_main_show_profile -> {
+            }
+            R.id.action_main_show_profile -> {
                 PROFILE_FRAGMENT
-            } else -> {
+            }
+            else -> {
                 EVENTS_FRAGMENT
             }
         }

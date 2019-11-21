@@ -61,10 +61,20 @@
         android:layout_below="@id/img_user"
         android:background="@color/color_dark_gray">
 
+        <TextView
+            android:id="@+id/fragment_profile_tv_yourEvents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/yourEvents"
+            android:textColor="@color/colorWhite"
+            android:textSize="25sp" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_profile_rv_userCreatedEvents"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/fragment_profile_tv_yourEvents"
             android:paddingTop="10dp"
             android:paddingBottom="10dp" />
 

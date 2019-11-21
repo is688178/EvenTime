@@ -24,6 +24,8 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.parse.*
+import kotlinx.coroutines.delay
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import java.io.InputStream
 import java.util.*
@@ -183,7 +185,7 @@ class ActivityCreatePrivateEvent : AppCompatActivity(), View.OnClickListener {
                     endHour.set(Calendar.MINUTE, minute)
                     endHourIsSet = true
                 }
-            }, currentHour, currentMinute, false
+            }, currentHour, currentMinute, true
         ).show()
     }
 
@@ -234,34 +236,36 @@ class ActivityCreatePrivateEvent : AppCompatActivity(), View.OnClickListener {
 
         parseObjectEvent.put("description", mETDescription.text.toString())
 
-        parseObjectEvent.saveInBackground(object : SaveCallback {
-            override fun done(e: ParseException?) {
-                if (e == null) {
-                    val parseObjectEventDateStart = ParseObject("EventDate")
-                    parseObjectEventDateStart.put("date", calendarStartDate.time)
-                    parseObjectEventDateStart.put("Event", parseObjectEvent)
-                    parseObjectEventDateStart.put("startDate", true)
-                    parseObjectEventDateStart.saveInBackground(object : SaveCallback {
-                        override fun done(e: ParseException?) {
-                            if (e != null)
-                                Log.e("ERROR SAVE StartDate", e.message.toString())
-                        }
-                    })
-
-                    val parseObjectEventDateEnd = ParseObject("EventDate")
-                    parseObjectEventDateEnd.put("date", calendarEndDate.time)
-                    parseObjectEventDateEnd.put("Event", parseObjectEvent)
-                    parseObjectEventDateEnd.put("startDate", false)
-                    parseObjectEventDateEnd.saveInBackground(object : SaveCallback {
-                        override fun done(e: ParseException?) {
-                            if (e != null)
-                                Log.e("ERROR SAVE StartDate", e.message.toString())
-                        }
-                    })
-                } else
-                    Log.d("ERROR SAVE PARSE", e.toString())
-            }
-        })
+        doAsync {
+            parseObjectEvent.saveInBackground(object : SaveCallback {
+                override fun done(e: ParseException?) {
+                    if (e == null) {
+                        val parseObjectEventDateStart = ParseObject("EventDate")
+                        parseObjectEventDateStart.put("date", calendarStartDate.time)
+                        parseObjectEventDateStart.put("Event", parseObjectEvent)
+                        parseObjectEventDateStart.put("startDate", true)
+                        parseObjectEventDateStart.saveInBackground(object : SaveCallback {
+                            override fun done(e: ParseException?) {
+                                if (e != null)
+                                    Log.e("ERROR SAVE StartDate", e.message.toString())
+                            }
+                        })
+                        Thread.sleep(1000)
+                        val parseObjectEventDateEnd = ParseObject("EventDate")
+                        parseObjectEventDateEnd.put("date", calendarEndDate.time)
+                        parseObjectEventDateEnd.put("Event", parseObjectEvent)
+                        parseObjectEventDateEnd.put("startDate", false)
+                        parseObjectEventDateEnd.saveInBackground(object : SaveCallback {
+                            override fun done(e: ParseException?) {
+                                if (e != null)
+                                    Log.e("ERROR SAVE EndDate", e.message.toString())
+                            }
+                        })
+                    } else
+                        Log.d("ERROR SAVE PARSE", e.toString())
+                }
+            })
+        }
     }
 
     private fun resourceToUri(context: Context, resID: Int): Uri? {

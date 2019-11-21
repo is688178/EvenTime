@@ -110,6 +110,7 @@ class FragmentProfile : Fragment(), View.OnClickListener {
             // Removing event not created by the user
             val userId = ParseUser.getCurrentUser().objectId
             val eventsToRemove = arrayListOf<ParseObject>()
+
             for (o in objects) {
                 val event = o["Event"] as ParseObject
                 val eventUser = event["Person"] as ParseUser
