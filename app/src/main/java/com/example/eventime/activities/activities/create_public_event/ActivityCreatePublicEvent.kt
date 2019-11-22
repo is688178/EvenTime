@@ -215,13 +215,14 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
                         null,
                         null
                     )
-                    
+
                     if (photo != null) {
                         event.parseFileImage = ParseFileConvert.provideParseImageFile(photo!!)
                     } else {
                         //DEFAULT IMAGE
                         event.parseFileImage = ParseFileConvert.provideParseImageFile(
-                            BitmapFactory.decodeResource(resources, R.drawable.concert2))
+                            BitmapFactory.decodeResource(resources, R.drawable.concert2)
+                        )
                     }
                     presenter.saveEvent(event)
                     finish()
@@ -314,6 +315,7 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && data != null) {
             when (requestCode) {
                 SELECT_HOUR_REQUEST -> {
@@ -324,8 +326,12 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
                         val date = DateHourUtils.createDateFromString(dateStr)
                         val hours = DateHourUtils.splitHoursToArrayList(hoursStr)
 
-                        dates.add(EventDate(null, date, false, hours))
-                        adapterEventDatesHours.notifyDataSetChanged()
+                        val eventDate = EventDate(null, date, false, hours)
+
+                        if (!dates.contains(eventDate)) {
+                            dates.add(eventDate)
+                            adapterEventDatesHours.notifyDataSetChanged()
+                        }
                     }
                 }
                 AUTOCOMPLETE_REQUEST -> {
@@ -349,6 +355,5 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
                 }
             }
         }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 }

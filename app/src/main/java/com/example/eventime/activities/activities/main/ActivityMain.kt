@@ -63,15 +63,6 @@ class ActivityMain : AppCompatActivity(),
         eventObj.put("startDate", true)
         eventObj.saveInBackground()*/
 
-        // Execute ParseCloud CallFunction
-        val params = HashMap<String, String>()
-        ParseCloud.callFunctionInBackground("hello", params,
-            FunctionCallback<String> { value, e ->
-                if (e == null) {
-                    Log.d("MainActivityCourse", value.toString())
-                }
-            })
-
     }
 
     private fun setFragment(/*item: MenuItem*/) {

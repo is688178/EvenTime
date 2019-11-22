@@ -24,9 +24,12 @@ class ParseApplication : Application() {
             server(SERVER_URL)
         }
 
+        val channels: ArrayList<String> = ArrayList()
+        channels.add("News")
         // Save the current Installation to Back4App
         val installation = ParseInstallation.getCurrentInstallation()
         installation.put("GCMSenderId", "550921368371")
+        installation.put("channels", channels)
         installation.saveInBackground(object : SaveCallback {
             override fun done(e: ParseException?) {
                 if (e != null)

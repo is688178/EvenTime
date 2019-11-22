@@ -8,8 +8,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.parse.ParseACL
 import com.parse.ParseUser
-
-
+import org.jetbrains.anko.doAsync
 
 
 class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.View) :
@@ -25,7 +24,10 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
         eventObj.put("name", event.name)
         eventObj.put("description", event.description)
         eventObj.put("locationName", event.location!!.name)
-        eventObj.put("location", ParseGeoPoint(event.location.latitude, event.location.longitude))
+        eventObj.put(
+            "location",
+            ParseGeoPoint(event.location.latitude, event.location.longitude)
+        )
         if (event.parseFileImage != null) {
             eventObj.put("image", event.parseFileImage!!)
         }
@@ -36,7 +38,7 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
 
         event.dates.forEach { eventDate ->
             if (eventDate.hours != null) {
-                eventDate.hours.forEach {hour ->
+                eventDate.hours.forEach { hour ->
                     val date = eventDate.date
                     date[Calendar.HOUR_OF_DAY] = hour[Calendar.HOUR_OF_DAY]
                     date[Calendar.MINUTE] = hour[Calendar.MINUTE]
@@ -45,18 +47,35 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
                     hourObject.put("date", date.time)
                     hourObject.put("Event", eventObj)
                     hourObject.put("startDate", false)
-                    hourObject.saveInBackground{e ->
+                    hourObject.saveInBackground { e ->
                         if (e != null) {
                             Log.e("CREATE EVENT ERR", e.message!!)
                         } else {
                             Log.d("CREATE EVENT", "SUCCESS")
-                        }
 
+                            // Execute ParseCloud CallFunction
+                            val params = HashMap<String, String>()
+                            params["alert"] = "Se ha publicado: " + event.name
+                            ParseCloud.callFunctionInBackground("evenTime", params,
+                                FunctionCallback<String> { value, parseException ->
+                                    if (parseException == null) {
+                                        Log.d("PC RETURN", value.toString())
+                                    } else {
+                                        Log.e("PC ERROR", parseException.message.toString())
+                                    }
+                                }
+                            )
+
+                        }
                     }
                 }
             }
         }
+
+
+
     }
+
 
     override fun fetchCategories() {
         val query = ParseQuery.getQuery<ParseObject>("Category")
