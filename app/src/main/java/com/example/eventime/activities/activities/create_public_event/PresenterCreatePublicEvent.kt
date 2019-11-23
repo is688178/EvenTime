@@ -8,7 +8,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 import com.parse.ParseACL
 import com.parse.ParseUser
-import org.jetbrains.anko.doAsync
 
 
 class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.View) :
@@ -71,9 +70,6 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
                 }
             }
         }
-
-
-
     }
 
 

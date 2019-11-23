@@ -1,4 +1,4 @@
-package com.example.eventime.activities.activities.create_public_event
+package com.example.eventime.activities.activities.create_private_event
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -24,7 +24,6 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.parse.*
-import kotlinx.coroutines.delay
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import java.io.InputStream
@@ -100,7 +99,9 @@ class ActivityCreatePrivateEvent : AppCompatActivity(), View.OnClickListener {
                 val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
                 val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
                     .build(this)
-                startActivityForResult(intent, AUTOCOMPLETE_REQUEST)
+                startActivityForResult(intent,
+                    AUTOCOMPLETE_REQUEST
+                )
             }
             mBtnAddDate.id -> {
                 showDatePickerDialog()

@@ -26,10 +26,6 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 import kotlin.collections.ArrayList
-import com.parse.ParseUser
-import com.parse.LogInCallback
-import com.parse.ParseACL
-
 
 class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener, ContractMain.View {
 
@@ -45,7 +41,6 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     /*private var selectedCategoryView: View? = null*/
 
     private lateinit var adapterRvEvents: AdapterRecyclerViewEvents
-
     private lateinit var containerContext: Context
 
     companion object {

@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.eventime.activities.activities.create_public_event.ActivityCreatePrivateEvent
+import com.example.eventime.activities.activities.create_private_event.ActivityCreatePrivateEvent
 import kotlinx.android.synthetic.main.fragment_calendar_event.view.*
 import org.jetbrains.anko.support.v4.startActivity
 import java.util.*

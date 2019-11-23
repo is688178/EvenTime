@@ -11,7 +11,7 @@ import com.example.eventime.R
 import com.parse.ParseFile
 import com.parse.ParseObject
 
-class AdapterPublicEvent (private val events: List<ParseObject>): RecyclerView.Adapter<NameViewHolder>() {
+class AdapterRecyclerViewParseEvent (private val events: List<ParseObject>): RecyclerView.Adapter<NameViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NameViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event_parse, parent, false)
