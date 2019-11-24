@@ -15,7 +15,6 @@ import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.beans.Event
 import com.example.eventime.activities.listeners.ClickListener
 import com.example.eventime.activities.utils.DateHourUtils
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import org.jetbrains.anko.find
 import java.util.*
 import kotlin.collections.ArrayList
@@ -157,6 +156,10 @@ open class EventViewHolder(private val view: View, private val clickListener: Cl
     private var eventLocationName: TextView = view.find(R.id.item_event_tv_event_location_name)
     private var eventDateHour: TextView = view.find(R.id.item_event_tv_event_date_hour)
 
+    companion object{
+        val days = arrayOf("Dom.", "Lun.", "Mar.", "Mie.", "Jue.", "Vie.", "Sáb.")
+    }
+
     init {
         view.setOnClickListener(this)
     }
@@ -176,8 +179,12 @@ open class EventViewHolder(private val view: View, private val clickListener: Cl
         eventTitle.text = event.name
         eventLocationName.text = event.location!!.name
         val eventDate = event.dates[0].date
-        eventDateHour.text = "${DateHourUtils.formatDateToMonthNameShowFormat(eventDate)} " +
+        val calendar = Calendar.getInstance()
+        calendar.time = eventDate.time
+        val strDate = "${days[calendar.get(Calendar.DAY_OF_WEEK)-1]} " +
+                "${DateHourUtils.formatDateToMonthNameShowFormat(eventDate)} " +
                 "${DateHourUtils.formatHourToShowFormat(eventDate)}"
+        eventDateHour.text = strDate
     }
 
     override fun onClick(view: View?) {

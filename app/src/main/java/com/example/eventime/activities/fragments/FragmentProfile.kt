@@ -14,22 +14,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.eventime.R
+import com.example.eventime.activities.activities.eventDetails.ActivityEventDetails
 import com.example.eventime.activities.activities.main.LogoutListener
-import com.example.eventime.activities.adapters.AdapterRecyclerViewParseEvent
+import com.example.eventime.activities.adapters.AdapterRecyclerViewEvents
+import com.example.eventime.activities.beans.*
+import com.example.eventime.activities.listeners.ClickListener
+import com.example.eventime.activities.utils.DateHourUtils
 import com.parse.ParseFile
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.intentFor
+import java.util.*
+import kotlin.collections.ArrayList
 
-class FragmentProfile : Fragment(), View.OnClickListener {
+class FragmentProfile : Fragment(), ClickListener, View.OnClickListener {
     private lateinit var listener: LogoutListener
-    private lateinit var container: Context
     private lateinit var mEmail: TextView
     private lateinit var mUserName: TextView
     private lateinit var mImageView: ImageView
     private lateinit var mCloseSession: Button
     private lateinit var mRecyclerView: RecyclerView
+
+    private lateinit var adapterRvEvents: AdapterRecyclerViewEvents
+    private lateinit var containerContext: Context
+    private var events = ArrayList<Event>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -46,7 +56,7 @@ class FragmentProfile : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
-        this.container = container!!.context
+        this.containerContext = container!!.context
 
         mEmail = view.find(R.id.fragment_profile_tv_email)
         mUserName = view.find(R.id.fragment_profile_tv_user_name)
@@ -57,7 +67,8 @@ class FragmentProfile : Fragment(), View.OnClickListener {
         serUserImage()
         setUserName()
         setUserEmail()
-        setUserCreatedEvents(view)
+        fetchUserEvents()
+
         mCloseSession.setOnClickListener(this)
 
         return view
@@ -102,31 +113,126 @@ class FragmentProfile : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun setUserCreatedEvents(view: View) {
-        val query = ParseQuery.getQuery<ParseObject>("EventDate")
-        query.include("Event")
-        query.findInBackground { objects, _ ->
-
-            // Removing event not created by the user
-            val userId = ParseUser.getCurrentUser().objectId
-            val eventsToRemove = arrayListOf<ParseObject>()
-
-            for (o in objects) {
-                val event = o["Event"] as ParseObject
-                val eventUser = event["Person"] as ParseUser
-                val eventIsPrivate = event["private"] as Boolean
-                if (eventUser.objectId != userId || eventIsPrivate)
-                    eventsToRemove.add(o)
+    override fun onClick(view: View, index: Int) {
+        when (view.parent) {
+            mRecyclerView -> {
+                startActivity(
+                    intentFor<ActivityEventDetails>(
+                        "eventId" to events[index].eventId,
+                        "eventDateId" to events[index].dates[0].eventDateId,
+                        "date" to DateHourUtils.formatDateToShowFormat(events[index].dates[0].date),
+                        "hour" to DateHourUtils.formatHourToString(events[index].dates[0].date)
+                    )
+                )
             }
-
-            for (o in eventsToRemove)
-                objects.remove(o)
-
-            mRecyclerView.adapter = AdapterRecyclerViewParseEvent(objects)
-            mRecyclerView.layoutManager = LinearLayoutManager(view.context)
         }
-
     }
 
+    private fun fetchUserEvents() {
+        //FETCH EVENT DATES
+        val cal = Calendar.getInstance()
+        val currentUserId = ParseUser.getCurrentUser().objectId
 
+        val queryDate = ParseQuery.getQuery<ParseObject>("EventDate")
+        queryDate.include("Event")
+        queryDate.include("Event.Person")
+        queryDate.include("Event.Category")
+        queryDate.addAscendingOrder("date")
+        queryDate.findInBackground { dates, e ->
+            if (e == null) {
+                val eventsO = ArrayList<Event>()
+                dates.forEach { date ->
+                    val event = date.getParseObject("Event")
+                    if (event != null) {
+                        if (event["private"] == false) {
+                            val l = event.getParseGeoPoint("location")
+                            val location = if (l != null) {
+                                Location(
+                                    event["locationName"].toString(),
+                                    l.latitude, l.longitude
+                                )
+                            } else {
+                                null
+                            }
+
+                            val imageParseFile = event.getParseFile("image")
+
+                            val p = event.getParseUser("Person")
+                            val person = if (p != null) {
+                                Person(
+                                    p.objectId,
+                                    p["username"].toString(),
+                                    "",
+                                    null,
+                                    p.getParseFile("image")
+                                )
+                            } else {
+                                null
+                            }
+                            val c = event.getParseObject("Category")
+                            val category = if (c != null) {
+                                Category(
+                                    c.objectId,
+                                    c["name"].toString(),
+                                    false,
+                                    c.getParseFile("icon")
+                                )
+                            } else {
+                                null
+                            }
+
+                            val dateO = date.getDate("date")
+                            val calx = Calendar.getInstance()
+                            calx.time = dateO!!
+                            val datesO = ArrayList<EventDate>()
+                            val eventDate = EventDate(
+                                date.objectId,
+                                calx,
+                                false,
+                                ArrayList()
+                            )
+                            eventDate.hours!!.add(cal)
+                            datesO.add(eventDate)
+
+                            val eventO = Event(
+                                event.objectId,
+                                event["name"].toString(),
+                                location,
+                                null,
+                                event["description"].toString(),
+                                datesO,
+                                Calendar.getInstance(),
+                                category,
+                                false,
+                                person,
+                                false,
+                                null,
+                                Calendar.getInstance(),
+                                imageParseFile,
+                                event
+                            )
+
+                            if (person != null) {
+                                if (person.personId == currentUserId)
+                                    eventsO.add(eventO)
+                            }
+                        }
+                    } else {
+                        Log.e("EVENTS FETCH", "Error: " + e?.message)
+                    }
+                }
+
+                this.events = eventsO
+                setupEventsRecyclerView()
+            } else {
+                Log.e("EVENTS FETCH", "Error: " + e.message!!)
+            }
+        }
+    }
+
+    private fun setupEventsRecyclerView() {
+        adapterRvEvents = AdapterRecyclerViewEvents(events, this, false)
+        mRecyclerView.adapter = adapterRvEvents
+        mRecyclerView.layoutManager = LinearLayoutManager(containerContext)
+    }
 }
