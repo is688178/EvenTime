@@ -13,21 +13,22 @@ import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
+import com.example.eventime.activities.activities.eventDetails.ActivityEventDetails
 import com.example.eventime.activities.adapters.AdapterRecyclerViewEvents
-import com.example.eventime.activities.adapters.AdapterRecyclerViewParseEvent
 import com.example.eventime.activities.beans.*
 import com.example.eventime.activities.listeners.ClickListener
+import com.example.eventime.activities.utils.DateHourUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.parse.ParseGeoPoint
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import com.parse.ParseUser
-import org.jetbrains.anko.collections.forEachByIndex
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.intentFor
 import java.util.*
 
-class FragmentSuggestedEvents : Fragment(), ClickListener {
+class FragmentSuggestedEvents : Fragment(), ClickListener, View.OnClickListener {
 
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var adapterRvEvents: AdapterRecyclerViewEvents
@@ -54,14 +55,6 @@ class FragmentSuggestedEvents : Fragment(), ClickListener {
         fetchSuggestedEvents()
 
         return view
-    }
-
-    override fun onClick(view: View, index: Int) {
-        when (view.parent) {
-            mRecyclerView -> {
-                TODO("Interact with the now showed and real Event")
-            }
-        }
     }
 
     private fun getLocation() {
@@ -144,7 +137,6 @@ class FragmentSuggestedEvents : Fragment(), ClickListener {
                 Log.e("EVENTS FETCH", "Error: " + e.message!!)
             }
         }
-
 
         val queryDate = ParseQuery.getQuery<ParseObject>("EventDate")
         queryDate.include("Event")
@@ -257,64 +249,6 @@ class FragmentSuggestedEvents : Fragment(), ClickListener {
         mRecyclerView.layoutManager = LinearLayoutManager(containerContext)
     }
 
-    private fun setRecyclerView(view: View) {
-        val query = ParseQuery.getQuery<ParseObject>("EventDate")
-        query.include("Event")
-        // Events endDate are saved 1 second later than its startDate, I need this order for index use
-        query.orderByDescending("createdAt")
-        // Only recommend events that had not happen
-        query.whereGreaterThanOrEqualTo("date", Calendar.getInstance().time)
-        query.findInBackground { objects, _ ->
-            // Removing event not created by the user
-            val userId = ParseUser.getCurrentUser().objectId
-            val eventsToRemove = arrayListOf<ParseObject>()
-            val intervals = arrayListOf<TimeInterval>()
-
-            // First get TimeIntervals of privateEvents of the User
-            for ((index, o) in objects.withIndex()) {
-                val event = o["Event"] as ParseObject
-                val eventUser = event["Person"] as ParseUser
-                val eventIsPrivate = event["private"] as Boolean
-                if (eventUser.objectId == userId && eventIsPrivate) {
-                    val timeInterval = TimeInterval(
-                        objects[index]["date"] as Date,
-                        objects[(index + 1)]["date"] as Date
-                    )
-                    intervals.add(timeInterval)
-                    eventsToRemove.add(o)
-                } else if (eventIsPrivate)
-                    eventsToRemove.add(o)
-            }
-
-            // Remove privateEvents of all users
-            for (o in eventsToRemove)
-                objects.remove(o)
-
-            // Get conflicts with the User private Events and public Events StartDate
-            for (o in objects) {
-                val startPublicEventDate = o["date"] as Date
-                for (interval in intervals) {
-                    if (interval.conflict(startPublicEventDate)) {
-                        eventsToRemove.add(o)
-                        break
-                    } else if (userGeoPointLocation != null) {
-                        //Also add to exclusion events too far
-                        val event = o["Event"] as ParseObject
-                        val eventLocation = event["location"] as ParseGeoPoint
-                        if (userGeoPointLocation!!.distanceInKilometersTo(eventLocation) > KILOMETERS_LIMIT)
-                            eventsToRemove.add(o)
-                    }
-                }
-            }
-
-            for (o in eventsToRemove)
-                objects.remove(o)
-
-            mRecyclerView.adapter = AdapterRecyclerViewParseEvent(objects)
-            mRecyclerView.layoutManager = LinearLayoutManager(view.context)
-        }
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -331,6 +265,25 @@ class FragmentSuggestedEvents : Fragment(), ClickListener {
                         Toast.LENGTH_LONG
                     ).show()
                 }
+        }
+    }
+
+    override fun onClick(v: View?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onClick(view: View, index: Int) {
+        when (view.parent) {
+            mRecyclerView -> {
+                startActivity(
+                    intentFor<ActivityEventDetails>(
+                        "eventId" to events[index].eventId,
+                        "eventDateId" to events[index].dates[0].eventDateId,
+                        "date" to DateHourUtils.formatDateToShowFormat(events[index].dates[0].date),
+                        "hour" to DateHourUtils.formatHourToString(events[index].dates[0].date)
+                    )
+                )
+            }
         }
     }
 }
