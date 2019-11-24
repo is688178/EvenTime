@@ -8,7 +8,7 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/color_black"
         android:elevation="4dp">
 
@@ -51,7 +51,7 @@
             android:layout_marginTop="30dp"
             android:text="@string/no_events_found_text"
             android:textColor="@color/colorWhite"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
     </ViewAnimator>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_events_fab_add_event"

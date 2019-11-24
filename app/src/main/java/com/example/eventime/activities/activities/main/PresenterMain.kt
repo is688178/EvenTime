@@ -129,8 +129,6 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
                             )
 
                             eventsO.add(eventO)
-                        } else {
-                            val v = ""
                         }
                     } else {
                         Log.e("EVENTS FETCH", "Error: " + e?.message)

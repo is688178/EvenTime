@@ -86,7 +86,6 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
             eventsCopy.forEach {event ->
                 events.add(event)
             }
-            //notifyDataSetChanged()
             filterApplied = NO_FILTER
             filterEventsDate(lastDateFilterTypeApplied)
             return true

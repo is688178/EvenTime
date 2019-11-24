@@ -28,7 +28,6 @@ import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 import kotlin.collections.ArrayList
 
-
 class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener, ContractMain.View {
 
     private lateinit var tabLayout: TabLayout
@@ -76,7 +75,6 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         }*/
 
         presenter.fetchCategories(containerContext)
-        Log.e("ERROR REPEAT", "Asdasd")
         presenter.fetchEvents()
 
         fabAddEvent.setOnClickListener(this)
@@ -87,8 +85,8 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     private fun bindViews(view: View) {
         tabLayout = view.find(R.id.fragment_events_tab_layout)
         rvCategories = view.find(R.id.fragment_events_rv_categories)
-        //vaSwitcher = view.find(R.id.fragment_events_va_switcher)
-       // rvEvents = view.find(R.id.fragment_events_rv_events)
+        vaSwitcher = view.find(R.id.fragment_events_va_switcher)
+        rvEvents = view.find(R.id.fragment_events_rv_events)
         fabAddEvent = view.find(R.id.fragment_events_fab_add_event)
     }
 
@@ -124,11 +122,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     }
 
     override fun showEvents(events: ArrayList<Event>) {
-        Log.d("EVENTSLENGTH", events.size.toString())
-        Log.d("EVENTSLENGTH", this.events.size.toString())
         this.events = events
-        Log.d("EVENTSLENGTH", events.size.toString())
-        Log.d("EVENTSLENGTH", this.events.size.toString())
         setupEventsRecyclerView()
         vaSwitcher.displayedChild = SHOW_EVENTS
         onTabSelected(tabLayout.getTabAt(0))
@@ -149,14 +143,11 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
                     selectedCategory = categories[index]
                     categoriesAdapter.notifyDataSetChanged()
 
-
-                    Log.d("EVENTSLENGTH BEF CAT", this.events.size.toString())
                     if (adapterRvEvents.filterEventsCategory(selectedCategory)) {
                         vaSwitcher.displayedChild = SHOW_EVENTS
                     } else {
                         vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
                     }
-                    Log.d("EVENTSLENGTH AFT CAT", this.events.size.toString())
                 }
             } rvEvents -> {
                 startActivity(intentFor<ActivityEventDetails>("eventId" to events[index].eventId,
@@ -188,14 +179,11 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
             }
         }
 
-
-        Log.d("EVENTSLENGTH BEF DATE", this.events.size.toString())
         if (adapterRvEvents.filterEventsDate(dateFilter)) {
             vaSwitcher.displayedChild = SHOW_EVENTS
         } else {
             vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
         }
-        Log.d("EVENTSLENGTH AFT DATE", this.events.size.toString())
     }
     override fun onTabReselected(tab: TabLayout.Tab?) {}
     override fun onTabUnselected(tab: TabLayout.Tab?) {}
