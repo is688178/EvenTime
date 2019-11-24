@@ -10,7 +10,6 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import com.example.eventime.R
-import com.example.eventime.activities.activities.main.ActivityMain
 import com.parse.ParseFile
 import com.parse.ParseQuery
 import com.parse.ParseUser

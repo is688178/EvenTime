@@ -4,16 +4,70 @@ import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
+import com.example.eventime.R
 import com.example.eventime.activities.activities.create_private_event.ActivityCreatePrivateEvent
+import com.kizitonwose.calendarview.model.*
+import com.kizitonwose.calendarview.ui.DayBinder
+import com.kizitonwose.calendarview.ui.ViewContainer
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.calendar_day_layout.view.*
+import kotlinx.android.synthetic.main.fragment_calendar.*
 import kotlinx.android.synthetic.main.fragment_calendar_event.view.*
 import org.jetbrains.anko.support.v4.startActivity
+import org.threeten.bp.LocalDate
+import org.threeten.bp.YearMonth
+import org.threeten.bp.temporal.WeekFields
 import java.util.*
+
+
+private val Context.inputMethodManager
+    get() = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+data class PrivateEvent(val id: String, val text: String, val date: LocalDate)
+
+class CalemdarEventsAdapter(val onClick: (PrivateEvent) -> Unit) :
+    RecyclerView.Adapter<CalemdarEventsAdapter.CalendarEventsViewHolder>() {
+
+    val events = mutableListOf<PrivateEvent>()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarEventsViewHolder {
+        val view = LayoutInflater.from(parent.context) .inflate(R.layout.event_item_view, parent, false)
+        return CalendarEventsViewHolder(view)
+        //return CalendarEventsViewHolder(parent.inflate(R.layout.event_item_view))
+
+    }
+
+    override fun onBindViewHolder(viewHolder: CalendarEventsViewHolder, position: Int) {
+        viewHolder.bind(events[position])
+    }
+
+    override fun getItemCount(): Int = events.size
+
+    inner class CalendarEventsViewHolder(override val containerView: View) :
+        RecyclerView.ViewHolder(containerView), LayoutContainer {
+
+        init {
+            itemView.setOnClickListener {
+                onClick(events[adapterPosition])
+            }
+        }
+
+        fun bind(event: PrivateEvent) {
+
+        }
+    }
+
+}
+
 
 
 class FragmentCalendar : Fragment(){
@@ -28,9 +82,9 @@ class FragmentCalendar : Fragment(){
     }
 
     override fun onCreateView( inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(com.example.eventime.R.layout.fragment_calendar_event, container, false)
+        val view = inflater.inflate(com.example.eventime.R.layout.fragment_calendar, container, false)
         this.container = container!!.context
-        view.calendar.setOnDateChangeListener{ _, year, month, dayOfMonth ->
+        /*view.calendar.setOnDateChangeListener{ _, year, month, dayOfMonth ->
             // Note that months are indexed from 0. So, 0 means January, 1 means february, 2 means march etc.
             msg = ("$dayOfMonth-"+(month + 1)+"-$year")
             beginTime = Calendar.getInstance()
@@ -39,22 +93,55 @@ class FragmentCalendar : Fragment(){
             endTime = Calendar.getInstance()
             endTime.set(year, month, dayOfMonth, 13, 0)
 
-        }
+        }*/
 
         view.fragment_calendar_add_event.setOnClickListener {
-
-/*            val intent = Intent(Intent.ACTION_INSERT)
-                .setData(CalendarContract.Events.CONTENT_URI)
-                .putExtra(CalendarContract.Events.TITLE, "New Event")
-                .putExtra(CalendarContract.Events.EVENT_LOCATION, "Location")
-                .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime) //System.currentTimeMillis())
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)//System.currentTimeMillis() + (60*60*1000))*/
-
             startActivity<ActivityCreatePrivateEvent>()
         }
 
         return view
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val currentMonth = YearMonth.now()
+        val firstMonth = currentMonth.minusMonths(10)
+        val lastMonth = currentMonth.plusMonths(10)
+        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+        calendarView.setup(firstMonth, lastMonth, firstDayOfWeek)
+        calendarView.scrollToMonth(currentMonth)
+
+        calendarView.inDateStyle = InDateStyle.ALL_MONTHS
+        calendarView.outDateStyle = OutDateStyle.END_OF_ROW
+        calendarView.scrollMode = ScrollMode.PAGED
+        calendarView.orientation = RecyclerView.HORIZONTAL
+
+        calendarView.maxRowCount = 6
+        calendarView.hasBoundaries = true
+
+
+        class DayViewContainer(view: View) : ViewContainer(view) {
+            val textView = view.calendarDayText
+
+            // Without the kotlin android extensions plugin
+            // val textView = view.findViewById<TextView>(R.id.calendarDayText)
+        }
+
+        calendarView.dayBinder = object : DayBinder<DayViewContainer> {
+            override fun create(view: View) = DayViewContainer(view)
+            override fun bind(container: DayViewContainer, day: CalendarDay) {
+                container.textView.text = day.date.dayOfMonth.toString()
+                if (day.owner == DayOwner.THIS_MONTH) {
+                    container.textView.setTextColor(Color.WHITE)
+                } else {
+                    container.textView.setTextColor(Color.GRAY)
+                }
+            }
+        }
+
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -69,72 +156,6 @@ class FragmentCalendar : Fragment(){
     }
 
 
+
+
 }
-
-
-/*if (ContextCompat.checkSelfPermission(this.container, Manifest.permission.WRITE_CALENDAR)
-                != PackageManager.PERMISSION_GRANTED) {
-                // Permission is not granted
-                // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this.container,
-                        Manifest.permission.WRITE_CALENDAR)) {
-                    // Show an explanation to the user *asynchronously* -- don't block
-                    // this thread waiting for the user's response! After the user
-                    // sees the explanation, try again to request the permission.
-                } else {
-                    // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(this.container,
-                        arrayOf(Manifest.permission.WRITE_CALENDAR),
-                        MY_PERMISSIONS_REQUEST_WRITE_CALENCAR)
-
-                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                    // app-defined int constant. The callback method gets the
-                    // result of the request.
-                }
-            } else {
-                val intent = Intent(Intent.ACTION_INSERT)
-                    .setData(CalendarContract.Events.CONTENT_URI)
-                    .putExtra(CalendarContract.Events.TITLE, "New Event")
-                    .putExtra(CalendarContract.Events.EVENT_LOCATION, "Location")
-                    .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, beginTime) //System.currentTimeMillis())
-                    .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, endTime)//System.currentTimeMillis() + (60*60*1000))
-
-                startActivityForResult(intent, CREATE_EVENT)
-            }
-
-            /*
-
-
-
-
-
-
-
-
-
-
-
-
-/*val beginTime = Calendar.getInstance()
-       beginTime.set(2012, 0, 19, 7, 30)
-
-       val endTime = Calendar.getInstance()
-       endTime.set(2012, 0, 19, 8, 30)
-
-       val intent = Intent(Intent.ACTION_INSERT)
-           .setData(Events.CONTENT_URI)
-           .putExtra(
-               CalendarContract.EXTRA_EVENT_BEGIN_TIME,
-               beginTime.getTimeInMillis()
-           )
-           .putExtra(
-               CalendarContract.EXTRA_EVENT_END_TIME,
-               endTime.getTimeInMillis()
-           )
-           .putExtra(Events.TITLE, "Yoga")
-           .putExtra(Events.DESCRIPTION, "Group class")
-           .putExtra(Events.EVENT_LOCATION, "The gym")
-           .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY)
-           .putExtra(Intent.EXTRA_EMAIL, "rowan@example.com,trevor@example.com")
-
-       startActivity(intent)*/
