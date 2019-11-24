@@ -42,7 +42,6 @@ class ParseApplication : Application() {
      * @param builder a lambda function with a [Parse.Configuration.Builder] as its context or Receiver
      */
     private inline fun configureParse(builder: Parse.Configuration.Builder.() -> Unit) {
-
         return Parse.initialize(Parse.Configuration.Builder(this).apply(builder).build())
     }
 }

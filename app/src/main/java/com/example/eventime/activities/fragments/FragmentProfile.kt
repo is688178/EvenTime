@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.eventime.R
 import com.example.eventime.activities.activities.main.LogoutListener
-import com.example.eventime.activities.adapters.AdapterPublicEvent
+import com.example.eventime.activities.adapters.AdapterRecyclerViewParseEvent
 import com.parse.ParseFile
 import com.parse.ParseObject
 import com.parse.ParseQuery
@@ -122,7 +122,7 @@ class FragmentProfile : Fragment(), View.OnClickListener {
             for (o in eventsToRemove)
                 objects.remove(o)
 
-            mRecyclerView.adapter = AdapterPublicEvent(objects)
+            mRecyclerView.adapter = AdapterRecyclerViewParseEvent(objects)
             mRecyclerView.layoutManager = LinearLayoutManager(view.context)
         }
 

@@ -27,6 +27,12 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
+    <!--
+    Location
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:name=".activities.config.ParseApplication"
         android:allowBackup="true"
@@ -79,7 +85,7 @@
         </activity>
         <activity android:name=".activities.activities.main.ActivityMain" />
         <activity android:name=".activities.activities.ActivityAddPhoto" />
-        <activity android:name=".activities.activities.create_public_event.ActivityCreatePrivateEvent" />
+        <activity android:name=".activities.activities.create_private_event.ActivityCreatePrivateEvent" />
 
         <!--
             Push Notification
