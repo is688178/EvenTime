@@ -27,6 +27,32 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.appbar.AppBarLayout>
 
+    <ViewAnimator
+        android:id="@+id/fragment_events_va_switcher"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color_dark_gray"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fragment_events_rv_events"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:text="@string/no_events_found_text"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp" />
+    </ViewAnimator>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_events_fab_add_event"
         android:layout_width="wrap_content"

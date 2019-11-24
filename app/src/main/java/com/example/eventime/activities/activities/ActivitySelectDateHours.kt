@@ -176,8 +176,6 @@ class ActivitySelectDateHours : AppCompatActivity(), View.OnClickListener {
                 val time = Calendar.getInstance()
                 time.set(Calendar.HOUR_OF_DAY, hourOfDay)
                 time.set(Calendar.MINUTE, minute)
-                //setHour(DateHourUtils.formatHourToShowFormat(hourOfDay, minute))
-                //setHour(DateHourUtils.formatHourToShowFormat(time))
                 setHour(time)
                 adapterRecyclerViewHours.notifyDataSetChanged()
             }, currentHour, currentMinute, false

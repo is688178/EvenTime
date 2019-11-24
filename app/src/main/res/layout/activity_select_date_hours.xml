@@ -58,7 +58,7 @@
             android:id="@+id/activity_select_date_hours_fab_save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_save"
+            android:src="@drawable/ic_check"
             android:layout_gravity="right"/>
     </LinearLayout>
 </ScrollView>
