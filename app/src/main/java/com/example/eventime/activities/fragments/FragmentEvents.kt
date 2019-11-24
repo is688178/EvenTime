@@ -26,10 +26,6 @@ import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 import kotlin.collections.ArrayList
-import com.parse.ParseUser
-import com.parse.LogInCallback
-import com.parse.ParseACL
-
 
 class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener, ContractMain.View {
 
@@ -45,7 +41,6 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     /*private var selectedCategoryView: View? = null*/
 
     private lateinit var adapterRvEvents: AdapterRecyclerViewEvents
-
     private lateinit var containerContext: Context
 
     companion object {
@@ -74,7 +69,6 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
                 Toast.makeText(containerContext, "Hecho", Toast.LENGTH_LONG).show()
                 val parseACL = ParseACL(parseUser)
                 parseACL.publicReadAccess = true
-
                 parseUser.setACL(parseACL)
             } else {
                 // Signup failed. Look at the ParseException to see what happened.
@@ -95,8 +89,8 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     private fun bindViews(view: View) {
         tabLayout = view.find(R.id.fragment_events_tab_layout)
         rvCategories = view.find(R.id.fragment_events_rv_categories)
-        vaSwitcher = view.find(R.id.fragment_events_va_switcher)
-        rvEvents = view.find(R.id.fragment_events_rv_events)
+        //vaSwitcher = view.find(R.id.fragment_events_va_switcher)
+       // rvEvents = view.find(R.id.fragment_events_rv_events)
         fabAddEvent = view.find(R.id.fragment_events_fab_add_event)
     }
 
@@ -123,29 +117,24 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         val dates = ArrayList<EventDate>()
         dates.add(EventDate(null, Calendar.getInstance(), false, ArrayList()))
         //dates.add(EventDate((LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).toString(), hours))
-
         val category = Category(null, "Musica", null, false)
         val currentDate = Calendar.getInstance()
         val person = Person(null,"Uriel", "Jiménez", null)
         val event1 = Event(null,"Aerosmith concert", Location("Auditorio Telmex", 123.0, 132.0),
             null, "Es un concierto", dates, currentDate, category,
             false, person, null, null, null)
-
         val event2 = Event(null,"Exposición de arte", Location("Casa de la cultura",123.0, 132.0),
             null, "Exposición de pinturas", dates, currentDate, category,
             false, person, null, null, null)
-
         val event3 = Event(null,"Feria de la birria", Location("Centro", 123.0, 132.0),
             null, "Birria de la buena!", dates, currentDate, category,
             false, person, null, null, null)
-
         //events = ArrayList<Event>()
         events.add(event1)
         events.add(event1)
         events.add(event2)
         events.add(event3)
         events.add(event3)
-
         val v = events*/
 
         adapterRvEvents = AdapterRecyclerViewEvents(events, this, false)
@@ -193,9 +182,9 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
                     }
                 }
             } rvEvents -> {
-                startActivity(intentFor<ActivityEventDetails>("eventName" to events[index].name))
-                //Toast.makeText(containerContext, "Event!", Toast.LENGTH_SHORT).show()
-            }
+            startActivity(intentFor<ActivityEventDetails>("eventName" to events[index].name))
+            //Toast.makeText(containerContext, "Event!", Toast.LENGTH_SHORT).show()
+        }
         }
     }
 
