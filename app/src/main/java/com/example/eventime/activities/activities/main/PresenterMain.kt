@@ -25,7 +25,6 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
             if (e == null) {
                 val categoriesO = ArrayList<Category>()
                 categories.map { category ->
-                    //val c = File(category.getParseFile("icon")!!.url)
                     return@map Category(
                         category.objectId,
                         category["name"].toString(),
@@ -47,119 +46,100 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
     }
 
     override fun fetchEvents() {
-        val eventsStr = HashSet<String>()
-        var count = 0
-        val query = ParseQuery.getQuery<ParseObject>("Event")
-        query.whereEqualTo("private", false)
-        query.include("Person")
-        query.include("Category")
-        query.findInBackground { events, e ->
+        //FETCH EVENT DATES
+        val cal = Calendar.getInstance()
+        val queryDate = ParseQuery.getQuery<ParseObject>("EventDate")
+        queryDate.include("Event")
+        queryDate.include("Event.Person")
+        queryDate.include("Event.Category")
+        queryDate.addAscendingOrder("date")
+        queryDate.whereGreaterThanOrEqualTo("date", cal.time)
+        queryDate.findInBackground { dates, e ->
             if (e == null) {
                 val eventsO = ArrayList<Event>()
-                events.map { event ->
-                    eventsStr.add(event.objectId)
-                    val l = event.getParseGeoPoint("location")
-                    val location = if (l != null) {
-                        Location(
-                            event["locationName"].toString(),
-                            l.latitude, l.longitude
-                        )
-                    } else {
-                        null
-                    }
+                dates.forEach { date ->
+                    val event = date.getParseObject("Event")
+                    if (event != null) {
+                        if (event["private"] == false) {
+                            val l = event.getParseGeoPoint("location")
+                            val location = if (l != null) {
+                                Location(
+                                    event["locationName"].toString(),
+                                    l.latitude, l.longitude
+                                )
+                            } else {
+                                null
+                            }
 
-                    val imageParseFile = event.getParseFile("image")
+                            val imageParseFile = event.getParseFile("image")
 
-                    val p = event.getParseUser("Person")
-                    val person = if (p != null) {
-                        Person(
-                            p.objectId,
-                            p["username"].toString(),//name
-                            "",
-                            null,
-                            p.getParseFile("image")
-                        )
-                    } else {
-                        null
-                    }
-                    val c = event.getParseObject("Category")
-                    val category = if (c != null) {
-                        Category(
-                            c.objectId,
-                            c["name"].toString(),
-                            false,
-                            c.getParseFile("icon")
-                        )
-                    } else {
-                        null
-                    }
+                            val p = event.getParseUser("Person")
+                            val person = if (p != null) {
+                                Person(
+                                    p.objectId,
+                                    p["username"].toString(),
+                                    "",
+                                    null,
+                                    p.getParseFile("image")
+                                )
+                            } else {
+                                null
+                            }
+                            val c = event.getParseObject("Category")
+                            val category = if (c != null) {
+                                Category(
+                                    c.objectId,
+                                    c["name"].toString(),
+                                    false,
+                                    c.getParseFile("icon")
+                                )
+                            } else {
+                                null
+                            }
 
-
-                    val eventO = Event(
-                        event.objectId,
-                        event["name"].toString(),
-                        location,
-                        null,
-                        event["description"].toString(),
-                        ArrayList(),
-                        Calendar.getInstance(),
-                        category,
-                        false,
-                        person,
-                        false,
-                        null,
-                        Calendar.getInstance(),
-                        imageParseFile,
-                        event
-                    )
-
-                    //FETCH EVENT DATES
-                    val queryDate = ParseQuery.getQuery<ParseObject>("EventDate")
-                    queryDate.whereEqualTo("Event", event)
-                    //queryDate.orderByAscending("date")
-                    queryDate.findInBackground { dates, e ->
-                        if (e == null) {
+                            val dateO = date.getDate("date")
+                            val calx = Calendar.getInstance()
+                            calx.time = dateO!!
                             val datesO = ArrayList<EventDate>()
-                            val datesStr = HashSet<String>()
-                            dates.forEach { dateP ->
-                                val date = dateP.getDate("date")
-                                val cal = Calendar.getInstance()
-                                cal.time = date!!
-                                if (!datesStr.contains(DateHourUtils.formatDateToShowFormat(cal))) {
-                                    datesStr.add(DateHourUtils.formatDateToShowFormat(cal))
-                                    val eventDate = EventDate(
-                                        dateP.objectId,
-                                        cal,
-                                        false,
-                                        ArrayList()
-                                    )
-                                    eventDate.hours!!.add(cal)
-                                    datesO.add(eventDate)
-                                } else {
-                                    val dateIndex =
-                                        datesStr.indexOf(DateHourUtils.formatDateToShowFormat(cal))
-                                    datesO[dateIndex].hours!!.add(cal)
-                                }
-                            }
+                            val eventDate = EventDate(
+                                date.objectId,
+                                calx,
+                                false,
+                                ArrayList()
+                            )
+                            eventDate.hours!!.add(cal)
+                            datesO.add(eventDate)
 
-                            val evIndex = eventsStr.indexOf(dates[0].getParseObject("Event")!!.objectId)
-                            eventsO[evIndex].dates = datesO
+                            val eventO = Event(
+                                event.objectId,
+                                event["name"].toString(),
+                                location,
+                                null,
+                                event["description"].toString(),
+                                datesO,
+                                Calendar.getInstance(),
+                                category,
+                                false,
+                                person,
+                                false,
+                                null,
+                                Calendar.getInstance(),
+                                imageParseFile,
+                                event
+                            )
 
-                            count++
-                            if (count == eventsO.size) {
-                                if (eventsO.size != 0) {
-                                    view.showEvents(eventsO)
-                                } else {
-                                    view.showNoEventsFound()
-                                }
-                            }
-                        } else {
-                            Log.e("EVENT DATES FETCH", "Error: " + e.message!!)
+                            eventsO.add(eventO)
                         }
+                    } else {
+                        Log.e("EVENTS FETCH", "Error: " + e?.message)
                     }
+                }
 
-                    return@map eventO
-                }.toCollection(eventsO)
+                if (eventsO.size != 0) {
+                    view.showEvents(eventsO)
+                } else {
+                    view.showNoEventsFound()
+                }
             } else {
                 Log.e("EVENTS FETCH", "Error: " + e.message!!)
             }

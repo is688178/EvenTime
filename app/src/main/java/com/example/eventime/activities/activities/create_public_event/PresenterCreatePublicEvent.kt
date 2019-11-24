@@ -34,7 +34,13 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
         eventObj.put("private", event.privateEvent)
         eventObj.put("Person", currentUser)
         eventObj.put("Category", event.category!!.parseObject)
+        eventObj.saveInBackground {e ->
+            if (e == null) {
 
+            } else {
+                Log.e("PARSE ERROR ON SAVE", e.message)
+            }
+        }
         event.dates.forEach { eventDate ->
             if (eventDate.hours != null) {
                 eventDate.hours.forEach { hour ->

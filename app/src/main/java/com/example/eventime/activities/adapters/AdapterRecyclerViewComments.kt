@@ -12,13 +12,13 @@ import com.example.eventime.activities.beans.Comment
 import com.example.eventime.activities.listeners.ClickListener
 import org.jetbrains.anko.find
 
-class AdapterRecyclerViewComments(private val comments: ArrayList<Comment>, private val clickListener: ClickListener):
+class AdapterRecyclerViewComments(private val comments: ArrayList<Comment>)://, private val clickListener: ClickListener):
     RecyclerView.Adapter<CommentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
 
-        return CommentViewHolder(view, clickListener)
+        return CommentViewHolder(view)//, clickListener)
     }
 
     override fun getItemCount(): Int = comments.size
@@ -28,8 +28,7 @@ class AdapterRecyclerViewComments(private val comments: ArrayList<Comment>, priv
     }
 }
 
-class CommentViewHolder(private val view: View, private val clickListener: ClickListener): RecyclerView.ViewHolder(view),
-        View.OnClickListener {
+class CommentViewHolder(private val view: View/*, private val clickListener: ClickListener*/): RecyclerView.ViewHolder(view) {
 
     private val ivPersonPhoto: ImageView = view.find(R.id.item_comment_iv_person_photo)
     private val tvPersonName: TextView = view.find(R.id.item_comment_tv_person_name)
@@ -38,7 +37,7 @@ class CommentViewHolder(private val view: View, private val clickListener: Click
     private val tvCommentDescription: TextView = view.find(R.id.item_comment_tv_comment_description)
 
     init {
-        view.setOnClickListener(this)
+        //view.setOnClickListener(this)
     }
 
     fun bind(comment: Comment) {
@@ -50,11 +49,10 @@ class CommentViewHolder(private val view: View, private val clickListener: Click
 
         tvPersonName.text = "${comment.person.name} ${comment.person.lastname}"
         //tvCommentDate.text = DateHourUtils.formatDateToShowFormat()
-        rbEventRating.rating = comment.eventRating.toFloat()
         //tvCommentDescription.text = comment.description
     }
-
+/*
     override fun onClick(view: View?) {
         clickListener.onClick(view!!, adapterPosition)
-    }
+    }*/
 }
