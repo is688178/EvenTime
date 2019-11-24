@@ -7,11 +7,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
+import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.listeners.ClickListener
 import kotlinx.android.synthetic.main.item_category.view.*
 import org.jetbrains.anko.find
 
-class AdapterRecyclerViewCategories(private val categories: ArrayList<String>, private val clickListener: ClickListener): RecyclerView.Adapter<CategoryViewHolder>() {
+class AdapterRecyclerViewCategories(private val categories: ArrayList<Category>, private val clickListener: ClickListener): RecyclerView.Adapter<CategoryViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
 
@@ -21,7 +22,7 @@ class AdapterRecyclerViewCategories(private val categories: ArrayList<String>, p
     override fun getItemCount(): Int = categories.size
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
-        holder.bind(categories[position])
+        holder.bind(categories[position].toString())
     }
 
 }
