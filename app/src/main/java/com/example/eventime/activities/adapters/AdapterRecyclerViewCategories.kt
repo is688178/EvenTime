@@ -1,7 +1,5 @@
 package com.example.eventime.activities.adapters
 
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.eventime.R
 import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.listeners.ClickListener
-import kotlinx.android.synthetic.main.item_category.view.*
 import org.jetbrains.anko.find
-import org.jetbrains.anko.image
-import java.io.File
 
 class AdapterRecyclerViewCategories(private val categories: ArrayList<Category>, private val clickListener: ClickListener): RecyclerView.Adapter<CategoryViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -32,8 +27,8 @@ class AdapterRecyclerViewCategories(private val categories: ArrayList<Category>,
 }
 
 class CategoryViewHolder(val view: View, private val clickListener: ClickListener): RecyclerView.ViewHolder(view),
-        View.OnClickListener {
-    var categoryIcon: ImageView = view.find(R.id.item_category_iv_category_icon)
+    View.OnClickListener {
+    private var categoryIcon: ImageView = view.find(R.id.item_category_iv_category_icon)
     private var categoryTitle: TextView = view.find(R.id.item_category_tv_category_title)
 
     init {
@@ -59,11 +54,6 @@ class CategoryViewHolder(val view: View, private val clickListener: ClickListene
                 .override(80, 80)
                 .into(categoryIcon)
         }
-
-
-        /*val iconUri = Uri.fromFile(category.icon)
-        val inpStream = view.context.contentResolver.openInputStream(iconUri)
-        categoryIcon.image = Drawable.createFromStream(inpStream, "")*/
     }
 
     override fun onClick(view: View?) {

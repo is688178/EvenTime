@@ -3,32 +3,30 @@ package com.example.eventime.activities.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import android.widget.ViewAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
 import com.example.eventime.activities.activities.create_public_event.ActivityCreatePublicEvent
-import com.example.eventime.activities.activities.ActivityEventDetails
+import com.example.eventime.activities.activities.eventDetails.ActivityEventDetails
 import com.example.eventime.activities.activities.main.ContractMain
 import com.example.eventime.activities.activities.main.PresenterMain
 import com.example.eventime.activities.adapters.AdapterRecyclerViewCategories
 import com.example.eventime.activities.adapters.AdapterRecyclerViewEvents
 import com.example.eventime.activities.beans.*
 import com.example.eventime.activities.listeners.ClickListener
+import com.example.eventime.activities.utils.DateHourUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 import kotlin.collections.ArrayList
-import com.parse.ParseUser
-import com.parse.LogInCallback
-import com.parse.ParseACL
 
 
 class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener, ContractMain.View {
@@ -42,7 +40,6 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     private var categories = ArrayList<Category>()
     private lateinit var categoriesAdapter: AdapterRecyclerViewCategories
     private lateinit var selectedCategory: Category
-    /*private var selectedCategoryView: View? = null*/
 
     private lateinit var adapterRvEvents: AdapterRecyclerViewEvents
 
@@ -54,8 +51,8 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         const val NEXT_WEEK_TAB = 2
 
         //const val SHOW_PROGRESS_BAR = 0
-        const val SHOW_EVENTS = 0
-        const val SHOW_NO_EVENTS_FOUNT = 1
+        const val SHOW_EVENTS = 1
+        const val SHOW_NO_EVENTS_FOUNT = 2
     }
 
     private var events = ArrayList<Event>()
@@ -67,7 +64,6 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         this.containerContext = container!!.context
         bindViews(view)
         setupTabLayout()
-        //setupEventsRecyclerView()
 
         /*ParseUser.logInInBackground("uriel", "uriel"){ parseUser, e ->
             if (e == null) {// Hooray! The user is logged in.
@@ -82,12 +78,10 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         }*/
 
         presenter.fetchCategories(containerContext)
-        //presenter.fetchEvents()
-
+        Log.e("ERROR REPEAT", "Asdasd")
+        presenter.fetchEvents()
 
         fabAddEvent.setOnClickListener(this)
-
-        //TODAY FILTER
 
         return view
     }
@@ -116,38 +110,6 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     }
 
     private fun setupEventsRecyclerView() {
-        //FETCH EVENTS
-
-        /*val hours = ArrayList<String>()
-        hours.add("10:00 pm")
-        val dates = ArrayList<EventDate>()
-        dates.add(EventDate(null, Calendar.getInstance(), false, ArrayList()))
-        //dates.add(EventDate((LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).toString(), hours))
-
-        val category = Category(null, "Musica", null, false)
-        val currentDate = Calendar.getInstance()
-        val person = Person(null,"Uriel", "Jiménez", null)
-        val event1 = Event(null,"Aerosmith concert", Location("Auditorio Telmex", 123.0, 132.0),
-            null, "Es un concierto", dates, currentDate, category,
-            false, person, null, null, null)
-
-        val event2 = Event(null,"Exposición de arte", Location("Casa de la cultura",123.0, 132.0),
-            null, "Exposición de pinturas", dates, currentDate, category,
-            false, person, null, null, null)
-
-        val event3 = Event(null,"Feria de la birria", Location("Centro", 123.0, 132.0),
-            null, "Birria de la buena!", dates, currentDate, category,
-            false, person, null, null, null)
-
-        //events = ArrayList<Event>()
-        events.add(event1)
-        events.add(event1)
-        events.add(event2)
-        events.add(event3)
-        events.add(event3)
-
-        val v = events*/
-
         adapterRvEvents = AdapterRecyclerViewEvents(events, this, false)
         rvEvents.adapter = adapterRvEvents
         rvEvents.layoutManager = LinearLayoutManager(containerContext)
@@ -164,7 +126,11 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     }
 
     override fun showEvents(events: ArrayList<Event>) {
+        Log.d("EVENTSLENGTH", events.size.toString())
+        Log.d("EVENTSLENGTH", this.events.size.toString())
         this.events = events
+        Log.d("EVENTSLENGTH", events.size.toString())
+        Log.d("EVENTSLENGTH", this.events.size.toString())
         setupEventsRecyclerView()
         vaSwitcher.displayedChild = SHOW_EVENTS
         onTabSelected(tabLayout.getTabAt(0))
@@ -179,22 +145,26 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     override fun onClick(view: View, index: Int) {
         when (view.parent) {
             rvCategories -> {
-                Toast.makeText(containerContext, "asd", Toast.LENGTH_LONG).show()
                 if (selectedCategory != categories[index]) {
                     categories[categories.indexOf(selectedCategory)].selected = false
                     categories[index].selected = true
                     selectedCategory = categories[index]
                     categoriesAdapter.notifyDataSetChanged()
 
+
+                    Log.d("EVENTSLENGTH BEF CAT", this.events.size.toString())
                     if (adapterRvEvents.filterEventsCategory(selectedCategory)) {
                         vaSwitcher.displayedChild = SHOW_EVENTS
                     } else {
                         vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
                     }
+                    Log.d("EVENTSLENGTH AFT CAT", this.events.size.toString())
                 }
             } rvEvents -> {
-                startActivity(intentFor<ActivityEventDetails>("eventName" to events[index].name))
-                //Toast.makeText(containerContext, "Event!", Toast.LENGTH_SHORT).show()
+                startActivity(intentFor<ActivityEventDetails>("eventId" to events[index].eventId,
+                    "eventDateId" to events[index].dates[0].eventDateId,
+                    "date" to DateHourUtils.formatDateToShowFormat(events[index].dates[0].date),
+                    "hour" to DateHourUtils.formatHourToString(events[index].dates[0].date)))
             }
         }
     }
@@ -219,11 +189,15 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
                 AdapterRecyclerViewEvents.TODAY_FILTER
             }
         }
+
+
+        Log.d("EVENTSLENGTH BEF DATE", this.events.size.toString())
         if (adapterRvEvents.filterEventsDate(dateFilter)) {
             vaSwitcher.displayedChild = SHOW_EVENTS
         } else {
             vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
         }
+        Log.d("EVENTSLENGTH AFT DATE", this.events.size.toString())
     }
     override fun onTabReselected(tab: TabLayout.Tab?) {}
     override fun onTabUnselected(tab: TabLayout.Tab?) {}

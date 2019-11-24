@@ -1,28 +1,33 @@
 package com.example.eventime.activities.adapters
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomViewTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.eventime.R
 import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.beans.Event
 import com.example.eventime.activities.listeners.ClickListener
 import com.example.eventime.activities.utils.DateHourUtils
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import org.jetbrains.anko.find
 import java.util.*
 import kotlin.collections.ArrayList
 
-class AdapterRecyclerViewEvents(
-    private var events: ArrayList<Event>, private val clickListener: ClickListener,
-    private val suggested: Boolean
-) :
+class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private val clickListener: ClickListener,
+                                private val suggested: Boolean) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var eventsCopy = ArrayList(events)
     private var filteredEvents = ArrayList<Event>()
+    private var lastDateFilterTypeApplied = TODAY_FILTER
+    private lateinit var lastCategoryFilterApplied: Category
 
     companion object {
         const val EVENT_ITEM = 0
@@ -37,8 +42,6 @@ class AdapterRecyclerViewEvents(
         const val NEXT_WEEK_FILTER = 5
     }
 
-
-    //IF THERE WILL BE MORE FILTERS, USE A COLLECTION
     private var filterApplied = NO_FILTER
 
     override fun getItemViewType(position: Int): Int {
@@ -78,28 +81,23 @@ class AdapterRecyclerViewEvents(
     fun filterEventsCategory(category: Category): Boolean {
         events.clear()
 
+        lastCategoryFilterApplied = category
         if (category.name == "Todos") {
-            events = ArrayList(eventsCopy)
-            notifyDataSetChanged()
+            eventsCopy.forEach {event ->
+                events.add(event)
+            }
+            //notifyDataSetChanged()
             filterApplied = NO_FILTER
+            filterEventsDate(lastDateFilterTypeApplied)
             return true
         }
 
-        if (filterApplied != NO_FILTER && filterApplied != CATEGORY_FILTER) {
-            for (event in filteredEvents) {
-                if (event.category!!.name == category.name) {
-                    events.add(event)
-                }
+        for (event in filteredEvents) {
+            if (event.category!!.name == category.name) {
+                events.add(event)
             }
-            filterApplied = CATEGORY_FILTER
-        } else {
-            for (event in eventsCopy) {
-                if (event.category!!.name == category.name) {
-                    events.add(event)
-                }
-            }
-            filteredEvents = ArrayList(events)
         }
+        filterApplied = CATEGORY_FILTER
 
         notifyDataSetChanged()
 
@@ -109,6 +107,7 @@ class AdapterRecyclerViewEvents(
     fun filterEventsDate(dateFilterType: Int): Boolean {
         events.clear()
 
+        lastDateFilterTypeApplied = dateFilterType
         val initDate = Calendar.getInstance()
         val finDate = Calendar.getInstance()
         when (dateFilterType) {
@@ -122,23 +121,17 @@ class AdapterRecyclerViewEvents(
             }
         }
 
-        if (filterApplied != NO_FILTER && filterApplied != DATE_FILTER) {
-            for (event in filteredEvents) {
-                val eventDate = event.dates[0].date
-                if (DateHourUtils.dateInRange(eventDate, initDate, finDate)) {
-                    events.add(event)
-                }
+        for (event in eventsCopy) {
+            val eventDate = event.dates[0].date
+            if (DateHourUtils.dateInRange(eventDate, initDate, finDate)) {
+                events.add(event)
             }
-            filterApplied = DATE_FILTER
-        } else {
-            for (event in eventsCopy) {
-                val eventDate = event.dates[0].date
-                if (DateHourUtils.dateInRange(eventDate, initDate, finDate)) {
-                    events.add(event)
-                }
-            }
-            filteredEvents = ArrayList(events)
         }
+        filteredEvents = ArrayList(events)
+        if (filterApplied != NO_FILTER) {
+            filterEventsCategory(lastCategoryFilterApplied)
+        }
+
         notifyDataSetChanged()
 
         return events.isNotEmpty()
@@ -170,11 +163,21 @@ open class EventViewHolder(private val view: View, private val clickListener: Cl
     }
 
     open fun bind(event: Event) {
-        //flContent.background = view.context.getDrawable(event.image)
+        Glide
+            .with(view.context)
+            .load(event.parseFileImage?.url)
+            .into(object : CustomViewTarget<FrameLayout, Drawable>(flContent) {
+                override fun onLoadFailed(errorDrawable: Drawable?) {}
+                override fun onResourceCleared(placeholder: Drawable?) {}
+                override fun onResourceReady(resource: Drawable,transition: Transition<in Drawable>?) {
+                    flContent.background = resource
+                }
+            })
+
         eventTitle.text = event.name
         eventLocationName.text = event.location!!.name
         val eventDate = event.dates[0].date
-        eventDateHour.text = "${DateHourUtils.formatDateToShowFormat(eventDate)} " +
+        eventDateHour.text = "${DateHourUtils.formatDateToMonthNameShowFormat(eventDate)} " +
                 "${DateHourUtils.formatHourToShowFormat(eventDate)}"
     }
 

@@ -215,7 +215,7 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
                         null,
                         null
                     )
-                    
+
                     if (photo != null) {
                         event.parseFileImage = ParseFileConvert.provideParseImageFile(photo!!)
                     } else {

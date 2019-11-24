@@ -34,6 +34,7 @@
 
     <string name="alert_dialog_confirm_event_assistance_tv_title">Confirme su asistencia al evento:</string>
     <string name="date_text">Fecha</string>
+    <string name="hour_text">Hora</string>
     <string name="alert_dialog_confirm_event_assistance_tv_hour">Hora:</string>
     <string name="cancel_text">Cancelar</string>
     <string name="alert_dialog_confirm_event_assistance_btn_confirm">Confirmar</string>
@@ -78,4 +79,5 @@
     <string name="Date">Fecha</string>
     <string name="fecha"><![CDATA[<Fecha>]]></string>
     <string name="save">Guardar</string>
+    <string name="activity_event_details_tv_no_comments">Nadie ha comentado aún</string>
 </resources>
