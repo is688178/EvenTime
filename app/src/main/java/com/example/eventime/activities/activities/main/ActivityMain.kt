@@ -1,10 +1,8 @@
 package com.example.eventime.activities.activities.main
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.eventime.R
@@ -14,10 +12,8 @@ import com.example.eventime.activities.config.SHARED_PREFERENCES
 import com.example.eventime.activities.fragments.FragmentCalendar
 import com.example.eventime.activities.fragments.FragmentEvents
 import com.example.eventime.activities.fragments.FragmentProfile
-import com.example.eventime.activities.fragments.FragmentSugestedEvents
+import com.example.eventime.activities.fragments.FragmentSuggestedEvents
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.parse.FunctionCallback
-import com.parse.ParseCloud
 import com.parse.ParseUser
 import org.jetbrains.anko.find
 import org.jetbrains.anko.startActivity
@@ -50,7 +46,7 @@ class ActivityMain : AppCompatActivity(),
 
         fragments.add(FragmentEvents())
         fragments.add(FragmentCalendar())
-        fragments.add(FragmentSugestedEvents())
+        fragments.add(FragmentSuggestedEvents())
         fragments.add(FragmentProfile())
         //add fragments to array
 

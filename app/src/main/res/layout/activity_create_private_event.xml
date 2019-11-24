@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/color_light_gray"
     android:fillViewport="true"
-    tools:context=".activities.activities.create_public_event.ActivityCreatePrivateEvent">
+    tools:context=".activities.activities.create_private_event.ActivityCreatePrivateEvent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:padding="20dp"

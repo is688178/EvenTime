@@ -14,7 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
-import com.example.eventime.activities.activities.create_public_event.ActivityCreatePrivateEvent
+import com.example.eventime.activities.activities.create_private_event.ActivityCreatePrivateEvent
 import com.kizitonwose.calendarview.model.*
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
@@ -73,6 +73,9 @@ class CalemdarEventsAdapter(val onClick: (PrivateEvent) -> Unit) :
 class FragmentCalendar : Fragment(){
 
     private lateinit var container: Context
+    private lateinit var  msg: String
+    private lateinit var beginTime: Calendar
+    private lateinit var endTime: Calendar
 
     companion object {
         const val CREATE_EVENT = 1000

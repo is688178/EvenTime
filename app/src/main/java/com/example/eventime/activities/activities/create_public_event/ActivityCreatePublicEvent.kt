@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.eventime.R
 import com.example.eventime.activities.activities.ActivitySelectDateHours
 import com.example.eventime.activities.adapters.AdapterRecyclerViewCreateEventDatesHours
@@ -42,13 +41,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
-import com.parse.ParseFile
-import com.parse.ParseGeoPoint
-import com.parse.ParseObject
-import org.jetbrains.anko.db.NULL
 import org.jetbrains.anko.find
-import java.io.File
-import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -71,7 +64,6 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
     private lateinit var adapterEventDatesHours: AdapterRecyclerViewCreateEventDatesHours
     private lateinit var btnAddDate: ImageButton
 
-    //private var categories: Array<String> = arrayOf("Deportes", "Musica", "Gastronomia")
     private lateinit var categories: ArrayList<Category>
 
     private lateinit var event: Event
@@ -81,7 +73,10 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
     private var photo: Bitmap? = null
     private lateinit var values: HashMap<String, String>
 
-    private val presenter = PresenterCreatePublicEvent(this)
+    private val presenter =
+        PresenterCreatePublicEvent(
+            this
+        )
 
     companion object {
         const val NAME = "name"
