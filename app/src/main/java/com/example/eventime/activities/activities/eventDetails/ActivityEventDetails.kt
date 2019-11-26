@@ -1,20 +1,19 @@
 package com.example.eventime.activities.activities.eventDetails
 
-import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.CustomViewTarget
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.example.eventime.activities.adapters.AdapterRecyclerViewComments
 import com.example.eventime.activities.beans.*
@@ -24,6 +23,9 @@ import org.jetbrains.anko.find
 import com.example.eventime.R
 import com.example.eventime.activities.utils.DateHourUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.parse.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -37,16 +39,17 @@ class ActivityEventDetails : AppCompatActivity(), ContractEventDetails.View, Vie
     private lateinit var tvHour: TextView
     private lateinit var rvComments: RecyclerView
     private lateinit var tvNoComments: TextView
+    private lateinit var etComment: EditText
+    private lateinit var btnComment: Button
+    private lateinit var adapterComments: AdapterRecyclerViewComments
     private lateinit var fabAttend: FloatingActionButton
 
     private val presenter = PresenterEventDetails(this)
 
     private lateinit var event: Event
-
-
     private lateinit var eventId: String
     private var eventDateId = ""
-    private lateinit var eventDate : Calendar
+    private lateinit var eventDate: Calendar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +63,6 @@ class ActivityEventDetails : AppCompatActivity(), ContractEventDetails.View, Vie
             eventDateId = extras.getString("eventDateId")!!
             eventDate = DateHourUtils.createDateFromString(extras.getString("date")!!)
             val eventHour = DateHourUtils.createHourFromString(extras.getString("hour")!!)
-
 
 
             //REMOVE LATER
@@ -85,24 +87,30 @@ class ActivityEventDetails : AppCompatActivity(), ContractEventDetails.View, Vie
         rvComments = find(R.id.activity_event_details_rv_comments)
         tvNoComments = find(R.id.activity_event_details_tv_no_comments)
         fabAttend = find(R.id.activity_event_details_fab_attend_event)
+        etComment = find(R.id.activity_event_details_tiet_comments)
+        btnComment = find(R.id.activity_event_details_btn_public_comment)
     }
 
     private fun setListeners() {
         fabAttend.setOnClickListener(this)
+        btnComment.setOnClickListener(this)
     }
 
     private fun setupToolbar() {
         collapsingToolbar.setCollapsedTitleTextColor(ContextCompat.getColor(this, R.color.colorWhite))
         collapsingToolbar.setExpandedTitleColor(ContextCompat.getColor(this, R.color.colorWhite))
-        //collapsingToolbar.setStatusBarScrimColor(resources.getColor(R.color.color_black))
         setSupportActionBar(toolbar)
         supportActionBar?.title = "Aerosmith concert"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun setupCommentsRecyclerView(comments: ArrayList<Comment>) {
-        rvComments.adapter = AdapterRecyclerViewComments(comments)
+        adapterComments = AdapterRecyclerViewComments(comments)
+        rvComments.adapter = adapterComments
         rvComments.layoutManager = LinearLayoutManager(this)
+
+        rvComments.visibility = View.VISIBLE
+        tvNoComments.visibility = View.GONE
     }
 
     private fun showAlertDialogConfimation() {
@@ -140,7 +148,7 @@ class ActivityEventDetails : AppCompatActivity(), ContractEventDetails.View, Vie
             .into(object : CustomViewTarget<CollapsingToolbarLayout, Drawable>(collapsingToolbar) {
                 override fun onLoadFailed(errorDrawable: Drawable?) {}
                 override fun onResourceCleared(placeholder: Drawable?) {}
-                override fun onResourceReady(resource: Drawable,transition: Transition<in Drawable>?) {
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
                     collapsingToolbar.background = resource
                 }
             })
@@ -159,13 +167,95 @@ class ActivityEventDetails : AppCompatActivity(), ContractEventDetails.View, Vie
         }
     }
 
+    private fun saveAndPublicComment() {
+        val strComment = etComment.text.toString()
+        val cal = Calendar.getInstance()
+        val user = ParseUser.getCurrentUser()
+
+        val queryEvent = ParseQuery.getQuery<ParseObject>("Event")
+        queryEvent.whereEqualTo("objectId", eventId)
+        queryEvent.getFirstInBackground { parseEvent, e ->
+            if (e == null) {
+                val parseObjectComment = ParseObject("Comment")
+                parseObjectComment.put("description", strComment)
+                parseObjectComment.put("date", cal.time)
+                parseObjectComment.put("Person", user)
+                parseObjectComment.put("Event", parseEvent)
+
+                doAsync {
+                    parseObjectComment.saveInBackground(object : SaveCallback {
+                        override fun done(e: ParseException?) {
+                            if (e == null) {
+                                Log.d("COMENTARIO GUARDADO", "MSG")
+
+                                //Clear textView
+                                etComment.setText("")
+                                refreshRecyclerViewComments()
+
+                            } else
+                                Log.e("ERROR SAVE PARSE", e.toString())
+                        }
+                    })
+                }
+            } else {
+                Log.e("ERROR SAVING COMMENT", e.message.toString())
+            }
+        }
+    }
+
+    private fun refreshRecyclerViewComments() {
+        val queryEvent = ParseQuery.getQuery<ParseObject>("Event")
+        queryEvent.whereEqualTo("objectId", eventId)
+        queryEvent.getFirstInBackground { parseEvent, e ->
+            if (e == null) {
+                doAsync {
+                    val queryComments = ParseQuery.getQuery<ParseObject>("Comment")
+                    queryComments.orderByDescending("date")
+                    queryComments.whereEqualTo("Event", parseEvent)
+                    queryComments.include("Person")
+                    queryComments.findInBackground { objectsComments, e ->
+                        if (e == null) {
+                            val comments = ArrayList<Comment>()
+                            for (oc in objectsComments) {
+                                val user = oc["Person"] as ParseUser
+                                val parseImage = user["image"] as ParseFile
+                                val bitmap = BitmapFactory.decodeStream(parseImage.dataStream)
+                                val person = Person(user.objectId, user.username, "", bitmap, parseImage)
+                                val calendar = Calendar.getInstance()
+                                calendar.time = oc["date"] as Date
+                                val comment = Comment(oc.objectId, person, 5, calendar, oc["description"] as String)
+
+                                comments.add(comment)
+                            }
+                            uiThread {
+                                setupCommentsRecyclerView(comments)
+/*                                if (adapterComments == null)
+
+                                else
+                                    adapterComments.updateData(comments)*/
+                            }
+                        }
+                    }
+
+                }
+            } else {
+                Log.e("ERROR SAVING COMMENT", e.message.toString())
+            }
+        }
+
+
+    }
+
 
     //LISTENERS
 
     override fun onClick(view: View?) {
-        when(view?.id) {
+        when (view?.id) {
             fabAttend.id -> {
                 showAlertDialogConfimation()
+            }
+            btnComment.id -> {
+                saveAndPublicComment()
             }
         }
     }

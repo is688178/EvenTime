@@ -110,7 +110,7 @@ class ActivityAddPhoto : AppCompatActivity() {
 
     private fun provideParseImageFile(bitmap: Bitmap): ParseFile {
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 70, stream)
         val byteArray = stream.toByteArray()
         return ParseFile("profile.jpg", byteArray)
     }

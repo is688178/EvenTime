@@ -3,6 +3,7 @@ package com.example.eventime.activities.activities.create_public_event
 import android.util.Log
 import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.beans.Event
+import com.example.eventime.activities.beans.Person
 import com.parse.*
 import java.util.*
 import kotlin.collections.ArrayList
