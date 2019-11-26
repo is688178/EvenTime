@@ -19,14 +19,6 @@ class HomeActivity : AppCompatActivity() {
         }
         supportFragmentManager.beginTransaction()
             .run {
-/*                if (instance is Example1Fragment || instance is Example4Fragment || instance is Example5Fragment) {
-                    return@run setCustomAnimations(
-                        R.anim.slide_in_up,
-                        R.anim.fade_out,
-                        R.anim.fade_in,
-                        R.anim.slide_out_down
-                    )
-                }*/
                 return@run setCustomAnimations(
                     R.anim.slide_in_right,
                     R.anim.slide_out_left,

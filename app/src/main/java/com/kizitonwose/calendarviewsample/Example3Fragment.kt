@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
+import com.example.eventime.activities.activities.create_private_event.ActivityCreatePrivateEvent
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.CalendarMonth
 import com.kizitonwose.calendarview.model.DayOwner
@@ -33,6 +34,7 @@ import kotlinx.android.synthetic.main.example_3_calendar_day.view.*
 import kotlinx.android.synthetic.main.exmaple_3_fragment.*
 import kotlinx.android.synthetic.main.home_activity.*
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.startActivity
 import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
@@ -231,7 +233,7 @@ class Example3Fragment : BaseFragment(), HasBackButton {
         }
 
         exThreeAddButton.setOnClickListener {
-            inputDialog.show()
+            startActivity<ActivityCreatePrivateEvent>()
         }
     }
 
