@@ -82,5 +82,7 @@
 
     <string name="yourEvents">Tus Eventos:</string>
     <string name="activity_event_details_tv_no_comments">Nadie ha comentado aún</string>
+    <string name="commentInvite">Dejanos un comentario de este evento.</string>
+    <string name="public_comment">Publicar mi comentario</string>
 
 </resources>

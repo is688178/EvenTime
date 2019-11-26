@@ -74,13 +74,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar" />
         <activity android:name=".activities.activities.ActivityRegister" />
-        <activity
-            android:name=".activities.activities.ActivityLogin"
-            android:screenOrientation="portrait"
-            android:theme="@style/NoActionBar">
-
-        </activity>
-        <activity android:name=".activities.activities.main.ActivityMain" >
+        <activity android:name=".activities.activities.main.ActivityMain" />
+        <activity android:name=".activities.activities.ActivityLogin" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

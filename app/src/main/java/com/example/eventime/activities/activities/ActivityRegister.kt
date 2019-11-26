@@ -106,11 +106,14 @@ class ActivityRegister : AppCompatActivity() {
             setPassword(strPassword)
         }
 
+
+
         parseUser.signUpInBackground { error ->
             if (error == null) {
                 //Sign up successful
                 Log.d("PARSE", "Sign up successful user: $strUser")
                 saveSessionToken(parseUser.sessionToken)
+                ParseUser.logIn(parseUser.username, strPassword)
                 startActivity<ActivityAddPhoto>()
             } else {
                 Log.e(

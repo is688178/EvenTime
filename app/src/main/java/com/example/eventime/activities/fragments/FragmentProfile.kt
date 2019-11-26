@@ -86,7 +86,7 @@ class FragmentProfile : Fragment(), ClickListener, View.OnClickListener {
         if (ParseUser.getCurrentUser() != null) {
             try {
                 val parseFile: ParseFile = ParseUser.getCurrentUser().get("image") as ParseFile
-                Glide.with(this).load(parseFile.url).into(mImageView)
+                Glide.with(this).load(parseFile.url).circleCrop().into(mImageView)
             } catch (exception: Exception) {
                 Log.e("DEBUG User Name", exception.message.toString())
             }
