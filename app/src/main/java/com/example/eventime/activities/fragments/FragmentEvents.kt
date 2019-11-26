@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ViewAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.eventime.R
 import com.example.eventime.activities.activities.create_public_event.ActivityCreatePublicEvent
 import com.example.eventime.activities.activities.eventDetails.ActivityEventDetails
@@ -27,11 +28,13 @@ import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 import kotlin.collections.ArrayList
 
-class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener, ContractMain.View {
+class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListener, View.OnClickListener,
+        ContractMain.View, SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var rvCategories: RecyclerView
     private lateinit var vaSwitcher: ViewAnimator
+    private lateinit var swipeToRefresh: SwipeRefreshLayout
     private lateinit var rvEvents: RecyclerView
     private lateinit var fabAddEvent: FloatingActionButton
 
@@ -61,6 +64,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         this.containerContext = container!!.context
         bindViews(view)
         setupTabLayout()
+        setListeners()
 
         /*ParseUser.logInInBackground("uriel", "uriel"){ parseUser, e ->
             if (e == null) {// Hooray! The user is logged in.
@@ -76,8 +80,6 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         presenter.fetchCategories(containerContext)
         presenter.fetchEvents()
 
-        fabAddEvent.setOnClickListener(this)
-
         return view
     }
 
@@ -85,8 +87,14 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         tabLayout = view.find(R.id.fragment_events_tab_layout)
         rvCategories = view.find(R.id.fragment_events_rv_categories)
         vaSwitcher = view.find(R.id.fragment_events_va_switcher)
+        swipeToRefresh = view.find(R.id.fragment_events_swipe)
         rvEvents = view.find(R.id.fragment_events_rv_events)
         fabAddEvent = view.find(R.id.fragment_events_fab_add_event)
+    }
+
+    private fun setListeners() {
+        swipeToRefresh.setOnRefreshListener(this)
+        fabAddEvent.setOnClickListener(this)
     }
 
     private fun setupTabLayout() {
@@ -125,6 +133,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         setupEventsRecyclerView()
         vaSwitcher.displayedChild = SHOW_EVENTS
         onTabSelected(tabLayout.getTabAt(0))
+        swipeToRefresh.isRefreshing = false
     }
 
     override fun showNoEventsFound() {
@@ -186,4 +195,8 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
     }
     override fun onTabReselected(tab: TabLayout.Tab?) {}
     override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+    override fun onRefresh() {
+        presenter.fetchEvents()
+    }
 }
