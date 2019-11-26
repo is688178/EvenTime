@@ -74,53 +74,6 @@ class PresenterEventDetails(private val view: ContractEventDetails.View) : Contr
                         Log.e("ERROR FIND COMMENT", e.message.toString())
                     }
                 }
-
-
-/*                val commentsQuery = ParseQuery.getQuery<ParseObject>("Comment")
-                commentsQuery.whereEqualTo("Event", eventId)
-                commentsQuery.include("Person")
-                commentsQuery.findInBackground { comments, e ->
-                    if (e == null) {
-                        comments.forEach { comment ->
-                            val person = comment.getParseObject("Person")
-                            val personO = if (person != null) {
-                                Person(
-                                    "",
-                                    person["name"].toString(),
-                                    "",
-                                    null,
-                                    person.getParseFile("image")
-                                )
-                            } else {
-                                Person(
-                                    "",
-                                    "Anonimo",
-                                    "",
-                                    null,
-                                    null
-                                )
-                            }
-
-                            val date = comment.getDate("date")
-                            val cal = Calendar.getInstance()
-                            cal.time = date
-                            val commentO = Comment(
-                                comment.objectId,
-                                personO,
-                                0,
-                                cal,
-                                comment["description"].toString()
-                            )
-
-                            eventO.comments?.add(commentO)
-                        }
-                    } else {
-                        //SHOW ERROR
-                    }
-                }*/
-
-
-
             } else {
                 Log.e("ERROR FIND EVENT", e.message.toString())
             }
