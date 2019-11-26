@@ -47,7 +47,7 @@ class Example3EventsAdapter(val onClick: (Event) -> Unit) :
     RecyclerView.Adapter<Example3EventsAdapter.Example3EventsViewHolder>() {
 
     val events = mutableListOf<Event>()
-    private lateinit var itemEventText : TextView
+    private lateinit var itemEventText: TextView
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Example3EventsViewHolder {
         return Example3EventsViewHolder(parent.inflate(R.layout.example_3_event_item_view))
@@ -202,11 +202,11 @@ class Example3Fragment : BaseFragment(), HasBackButton {
         }
 
         exThreeCalendar.monthScrollListener = {
-/*            requireActivity().homeToolbar.title = if (it.year == today.year) {
-                titleSameYearFormatter.format(it.yearMonth)
-            } else {
-                titleFormatter.format(it.yearMonth)
-            }*/
+            /*            requireActivity().homeToolbar.title = if (it.year == today.year) {
+                            titleSameYearFormatter.format(it.yearMonth)
+                        } else {
+                            titleFormatter.format(it.yearMonth)
+                        }*/
 
             // Select the first day of the month when
             // we scroll to a new month.
@@ -277,7 +277,7 @@ class Example3Fragment : BaseFragment(), HasBackButton {
 
     override fun onStop() {
         super.onStop()
-        (activity as AppCompatActivity).homeToolbar.setBackgroundColor(requireContext().getColorCompat(R.color.colorPrimary))
+//        (activity as AppCompatActivity).homeToolbar.setBackgroundColor(requireContext().getColorCompat(R.color.colorPrimary))
         requireActivity().window.statusBarColor = requireContext().getColorCompat(R.color.colorPrimaryDark)
     }
 }
