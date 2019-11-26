@@ -41,6 +41,10 @@ class FragmentProfile : Fragment(), ClickListener, View.OnClickListener {
     private lateinit var containerContext: Context
     private var events = ArrayList<Event>()
 
+    companion object {
+        const val LOG_TAG = "PARSE IMAGE PROFILE"
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
@@ -64,7 +68,7 @@ class FragmentProfile : Fragment(), ClickListener, View.OnClickListener {
         mImageView = view.find(R.id.ic_user)
         mRecyclerView = view.find(R.id.fragment_profile_rv_userCreatedEvents)
 
-        serUserImage()
+        checkParseDatabaseForImage()
         setUserName()
         setUserEmail()
         fetchUserEvents()
@@ -82,14 +86,24 @@ class FragmentProfile : Fragment(), ClickListener, View.OnClickListener {
         }
     }
 
-    private fun serUserImage() {
-        if (ParseUser.getCurrentUser() != null) {
-            try {
-                val parseFile: ParseFile = ParseUser.getCurrentUser().get("image") as ParseFile
-                Glide.with(this).load(parseFile.url).circleCrop().into(mImageView)
-            } catch (exception: Exception) {
-                Log.e("DEBUG User Name", exception.message.toString())
+    private fun checkParseDatabaseForImage() {
+        Log.v(LOG_TAG, "checkParseDatabaseForImage()")
+        try {
+            val query = ParseQuery<ParseUser>("_User")
+            query.getInBackground(ParseUser.getCurrentUser().objectId) { user, error ->
+                if (error == null) {
+                    Log.v(LOG_TAG, "success parse")
+                    val parseFile = user.getParseFile("image")
+                    //Picasso.get().load(parseFile?.url).placeholder(R.drawable.placeholder).into(imageProfile)
+                    Glide.with(this).load(parseFile?.url).circleCrop().into(mImageView)
+                } else {
+                    Log.e(LOG_TAG, "Failed to get Image from Parse : $error")
+                    //Picasso.get().load(R.drawable.placeholder).into(imageProfile)
+                }
             }
+
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "Failed : $e")
         }
     }
 
