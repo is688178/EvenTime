@@ -3,6 +3,8 @@ package com.example.eventime.activities.activities.create_public_event
 import android.util.Log
 import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.beans.Event
+import com.example.eventime.activities.beans.Person
+import com.example.eventime.activities.utils.DateHourUtils
 import com.parse.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -34,13 +36,6 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
         eventObj.put("private", event.privateEvent)
         eventObj.put("Person", currentUser)
         eventObj.put("Category", event.category!!.parseObject)
-        eventObj.saveInBackground {e ->
-            if (e == null) {
-
-            } else {
-                Log.e("PARSE ERROR ON SAVE", e.message)
-            }
-        }
         event.dates.forEach { eventDate ->
             if (eventDate.hours != null) {
                 eventDate.hours.forEach { hour ->
@@ -60,7 +55,9 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
 
                             // Execute ParseCloud CallFunction
                             val params = HashMap<String, String>()
-                            params["alert"] = "Se ha publicado: " + event.name
+                            params["alert"] = "Se ha publicado: " + event.name +
+                                    DateHourUtils.formatDateToShowFormat(event.dates[0].date) +
+                                    DateHourUtils.formatHourToShowFormat(event.dates[0].date)
                             ParseCloud.callFunctionInBackground("evenTime", params,
                                 FunctionCallback<String> { value, parseException ->
                                     if (parseException == null) {
