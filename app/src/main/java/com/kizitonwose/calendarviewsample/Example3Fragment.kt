@@ -181,17 +181,17 @@ class Example3Fragment : BaseFragment(), HasBackButton {
                     textView.makeVisible()
                     when (day.date) {
                         today -> {
-                            textView.setTextColorRes(R.color.example_3_white)
+                            textView.setTextColorRes(R.color.white)
                             textView.setBackgroundResource(R.drawable.example_3_today_bg)
                             dotView.makeInVisible()
                         }
                         selectedDate -> {
-                            textView.setTextColorRes(R.color.example_3_blue)
+                            textView.setTextColorRes(R.color.black)
                             textView.setBackgroundResource(R.drawable.example_3_selected_bg)
                             dotView.makeInVisible()
                         }
                         else -> {
-                            textView.setTextColorRes(R.color.example_3_black)
+                            textView.setTextColorRes(R.color.white)
                             textView.background = null
                             dotView.isVisible = events[day.date].orEmpty().isNotEmpty()
                         }
@@ -204,14 +204,6 @@ class Example3Fragment : BaseFragment(), HasBackButton {
         }
 
         exThreeCalendar.monthScrollListener = {
-            /*            requireActivity().homeToolbar.title = if (it.year == today.year) {
-                            titleSameYearFormatter.format(it.yearMonth)
-                        } else {
-                            titleFormatter.format(it.yearMonth)
-                        }*/
-
-            // Select the first day of the month when
-            // we scroll to a new month.
             selectDate(it.yearMonth.atDay(1))
         }
 
@@ -226,7 +218,7 @@ class Example3Fragment : BaseFragment(), HasBackButton {
                     container.legendLayout.tag = month.yearMonth
                     container.legendLayout.children.map { it as TextView }.forEachIndexed { index, tv ->
                         tv.text = daysOfWeek[index].name.first().toString()
-                        tv.setTextColorRes(R.color.example_3_black)
+                        tv.setTextColorRes(R.color.white)
                     }
                 }
             }

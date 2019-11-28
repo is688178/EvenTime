@@ -3,9 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="10dp"
+    android:background="@color/color_dark_gray"
+    android:textColor="@color/white"
     android:paddingBottom="10dp">
 
-    <include layout="@layout/calendar_day_legend" />
+    <include
+        layout="@layout/calendar_day_legend"/>
 
 </FrameLayout>
 
