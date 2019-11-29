@@ -1,5 +1,6 @@
 package com.example.eventime.activities.activities
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.eventime.R
+import com.example.eventime.activities.config.SESSION_ID_KEY
+import com.example.eventime.activities.config.SHARED_PREFERENCES
 import org.jetbrains.anko.find
 import org.jetbrains.anko.startActivity
 import com.parse.*
@@ -66,22 +69,31 @@ class ActivityRegister : AppCompatActivity() {
 
         when {
             (strUser.isEmpty() || strEmail.isEmpty() || strPassword.isEmpty() || strPassword2.isEmpty()) -> {
-                signUpErrorAlertDialog("Al menos un campo esta vacío")
+                val title = "Error de registro de usuario"
+                val message = "Al menos un campo esta vacío"
+                errorAlertDialog(title, message)
                 return
             }
 
+
             (strPassword != strPassword2) -> {
-                signUpErrorAlertDialog("Las contraseñas no concuerdan")
+                val title = "Error de registro de usuario"
+                val message = "Las contraseñas no concuerdan"
+                errorAlertDialog(title, message)
                 return
             }
 
             !isValidEmail(strEmail) ->{
-                signUpErrorAlertDialog("Patron de correo inválido")
+                val title = "Error de registro de usuario"
+                val message = "Patron de correo inválido"
+                errorAlertDialog(title, message)
                 return
             }
 
             !isValidPassword(strPassword) -> {
-                signUpErrorAlertDialog("Contraseña debil: se requieren 6 a 14 caracteres, numeros, letras mayusculas y minusculas (ambas)")
+                val title = "Error de registro de usuario"
+                val message = "Contraseña debil: se requieren 6 a 14 caracteres, numeros, letras mayusculas y minusculas (ambas)"
+                errorAlertDialog(title, message)
                 return
             }
         }
@@ -94,57 +106,37 @@ class ActivityRegister : AppCompatActivity() {
             setPassword(strPassword)
         }
 
+
+
         parseUser.signUpInBackground { error ->
             if (error == null) {
                 //Sign up successful
                 Log.d("PARSE", "Sign up successful user: $strUser")
+                saveSessionToken(parseUser.sessionToken)
+                ParseUser.logIn(parseUser.username, strPassword)
                 startActivity<ActivityAddPhoto>()
             } else {
                 Log.e(
                     "DEBUG PARSE",
                     "Failed to complete sign up process. Error message: ${error.message} Error code ${error.code}"
                 )
-                logInParseErrorAlertDialog()
+                val title = "Error de Registro en Parse"
+                val message = "Favor de ingresar todos los campos y revisar tu conexión a internet."
+                errorAlertDialog(title, message)
             }
         }
 
 
     }
 
-    private fun signUpErrorAlertDialog(message: String) {
+    private fun errorAlertDialog(title: String, message: String) {
         val builder = AlertDialog.Builder(this)
 
         // Set the alert dialog title
-        builder.setTitle("Error de registro de usuario")
+        builder.setTitle(title)
 
         // Display a message on alert dialog
-        builder.setMessage(
-            "${
-            message
-            }."
-        )
-
-        // Set a positive button and its click listener on alert dialog
-        builder.setPositiveButton("OK") { _, _ ->
-            Toast.makeText(this, "Revisa y vuelve a presionar el boton...", Toast.LENGTH_SHORT)
-                .show()
-        }
-
-        // Finally, make the alert dialog using builder
-        val dialog: AlertDialog = builder.create()
-
-        // Display the alert dialog on app interface
-        dialog.show()
-    }
-
-    private fun logInParseErrorAlertDialog() {
-        val builder = AlertDialog.Builder(this)
-
-        // Set the alert dialog title
-        builder.setTitle("Error de Registro en Parse")
-
-        // Display a message on alert dialog
-        builder.setMessage("Favor de ingresar todos los campos.")
+        builder.setMessage(message)
 
         // Set a positive button and its click listener on alert dialog
         builder.setPositiveButton("OK") { _, _ ->
@@ -176,4 +168,10 @@ class ActivityRegister : AppCompatActivity() {
         return passwordRegex.matches(password)
     }
 
+    private fun saveSessionToken(sessionToken: String) {
+        val sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(SESSION_ID_KEY, sessionToken)
+        editor.apply()
+    }
 }

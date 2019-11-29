@@ -1,33 +1,39 @@
 package com.example.eventime.activities.adapters
 
-import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomViewTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.eventime.R
+import com.example.eventime.activities.beans.Category
 import com.example.eventime.activities.beans.Event
 import com.example.eventime.activities.listeners.ClickListener
+import com.example.eventime.activities.utils.DateHourUtils
 import org.jetbrains.anko.find
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.collections.ArrayList
 
 class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private val clickListener: ClickListener,
-                                private val sugested: Boolean, private val itemTypes: ArrayList<Int>?) :
-        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+                                private val suggested: Boolean) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var eventsCopy = ArrayList(events)
     private var filteredEvents = ArrayList<Event>()
+    private var lastDateFilterTypeApplied = TODAY_FILTER
+    private lateinit var lastCategoryFilterApplied: Category
 
     companion object {
         const val EVENT_ITEM = 0
-        const val CATEGORY_ITEM = 1
+        const val EVENT_CATEGORY_ITEM = 1
 
         const val NO_FILTER = 0
-        const val CATERORY_FILTER = 1
+        const val CATEGORY_FILTER = 1
         const val DATE_FILTER = 2
 
         const val TODAY_FILTER = 3
@@ -35,25 +41,23 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
         const val NEXT_WEEK_FILTER = 5
     }
 
-
-    //IF THERE WILL BE MORE FILTERS, USE A COLLECTION
     private var filterApplied = NO_FILTER
 
     override fun getItemViewType(position: Int): Int {
-        return if (sugested) {
-            itemTypes!![position]
+        return if (suggested && events[position].firstOfCategory!!) {
+            EVENT_CATEGORY_ITEM
         } else {
             EVENT_ITEM
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (sugested && viewType == CATEGORY_ITEM) {
+        return if (suggested && viewType == EVENT_CATEGORY_ITEM) {
             val view = LayoutInflater.from(parent.context).inflate(
-                R.layout.item_sugested_event_category_title,
+                R.layout.item_event_with_category_title,
                 parent, false
             )
-            SugestedEventCategoryViewHolder(view)
+            EventCategoryViewHolder(view, clickListener)
         } else {
             val view = LayoutInflater.from(parent.context).inflate(
                 R.layout.item_event, parent,
@@ -61,8 +65,6 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
             )
             EventViewHolder(view, clickListener)
         }
-
-
     }
 
     override fun getItemCount(): Int = events.size
@@ -70,113 +72,63 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is EventViewHolder) {
             holder.bind(events[position])
-        } else if (holder is SugestedEventCategoryViewHolder) {
+        } else if (holder is EventCategoryViewHolder) {
             holder.bind(events[position])
         }
     }
 
-    fun filterEventsCategory(category: String): Boolean {
+    fun filterEventsCategory(category: Category): Boolean {
         events.clear()
 
-        if (category == "Todos") {
-            events = ArrayList(eventsCopy)
-            notifyDataSetChanged()
+        lastCategoryFilterApplied = category
+        if (category.name == "Todos") {
+            eventsCopy.forEach {event ->
+                events.add(event)
+            }
             filterApplied = NO_FILTER
+            filterEventsDate(lastDateFilterTypeApplied)
             return true
         }
 
-        if (filterApplied != NO_FILTER && filterApplied != CATERORY_FILTER) {
-            for (event in filteredEvents) {
-                if (event.category == category) {
-                    events.add(event)
-                }
+        for (event in filteredEvents) {
+            if (event.category!!.name == category.name) {
+                events.add(event)
             }
-            filterApplied = CATERORY_FILTER
-        } else {
-            for (event in eventsCopy) {
-                if (event.category == category) {
-                    events.add(event)
-                }
-            }
-            filteredEvents = ArrayList(events)
         }
+        filterApplied = CATEGORY_FILTER
 
         notifyDataSetChanged()
 
         return events.isNotEmpty()
     }
 
-    //FILTER EVENTS BY DATE
-    @SuppressLint("NewApi")
     fun filterEventsDate(dateFilterType: Int): Boolean {
         events.clear()
-        val initDate = when (dateFilterType) {
+
+        lastDateFilterTypeApplied = dateFilterType
+        val initDate = Calendar.getInstance()
+        val finDate = Calendar.getInstance()
+        when (dateFilterType) {
+            TODAY_FILTER -> {}
+            THIS_WEEK_FILTER -> {
+                finDate.add(Calendar.DAY_OF_MONTH, 7 - finDate.get(Calendar.DAY_OF_WEEK))
+            }
             NEXT_WEEK_FILTER -> {
-                LocalDate.now().plusDays(8 - LocalDate.now().dayOfWeek.value.toLong())
-            } else -> {
-                LocalDate.now()
-            }
-        }
-        val finDate = when (dateFilterType) {
-            TODAY_FILTER -> {
-                LocalDate.now()
-            } THIS_WEEK_FILTER -> {
-                LocalDate.now().plusDays(7 - LocalDate.now().dayOfWeek.value.toLong())
-            } NEXT_WEEK_FILTER -> {
-                LocalDate.now().plusDays(14 - LocalDate.now().dayOfWeek.value.toLong())
-            } else -> {
-                LocalDate.now()
+                finDate.add(Calendar.DAY_OF_MONTH, 14 - finDate.get(Calendar.DAY_OF_WEEK))
+                initDate.add(Calendar.DAY_OF_MONTH, 8 - initDate.get(Calendar.DAY_OF_WEEK))
             }
         }
 
-
-        if (filterApplied != NO_FILTER && filterApplied != DATE_FILTER) {
-            for (event in filteredEvents) {
-                val eventDate = LocalDate.parse(event.dates[0].date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                if (eventDate in initDate..finDate) {
-                    events.add(event)
-                }
+        for (event in eventsCopy) {
+            val eventDate = event.dates[0].date
+            if (DateHourUtils.dateInRange(eventDate, initDate, finDate)) {
+                events.add(event)
             }
-            filterApplied = DATE_FILTER
-        } else {
-            for (event in eventsCopy) {
-                val eventDate = LocalDate.parse(event.dates[0].date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                if (eventDate in initDate..finDate) {
-                    events.add(event)
-                }
-            }
-            filteredEvents = ArrayList(events)
         }
-
-        /*
-        if (filterApplied != NO_FILTER && filterApplied != DATE_FILTER) {
-            filteredEvents.forEach { event->
-                var flag = false
-                event.dates.forEach {
-                    val eventDate = LocalDate.parse(it.date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                    if (eventDate in initDate..finDate) {
-                        flag = true
-                    }
-                }
-
-                if (flag) events.add(event)
-            }
-            filterApplied = DATE_FILTER
-        } else {
-            eventsCopy.forEach { event->
-                var flag = false
-                event.dates.forEach {
-                    val eventDate = LocalDate.parse(it.date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-                    if (eventDate in initDate..finDate) {
-                        flag = true
-                    }
-                }
-
-                if (flag) events.add(event)
-            }
-            filteredEvents = ArrayList(events)
+        filteredEvents = ArrayList(events)
+        if (filterApplied != NO_FILTER) {
+            filterEventsCategory(lastCategoryFilterApplied)
         }
-        * */
 
         notifyDataSetChanged()
 
@@ -184,15 +136,19 @@ class AdapterRecyclerViewEvents(private var events: ArrayList<Event>, private va
     }
 }
 
-class SugestedEventCategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    private var tvCategoryName: TextView = view.find(R.id.item_sugested_event_category_tv_category)
+class EventCategoryViewHolder(view: View, clickListener: ClickListener) :
+    EventViewHolder(view, clickListener) {
+    private var tvCategoryName: TextView =
+        view.find(R.id.item_event_with_category_title_tv_category)
 
-    fun bind(event: Event) {
-        tvCategoryName.text = event.category
+    override fun bind(event: Event) {
+        tvCategoryName.text = event.category!!.name
+
+        super.bind(event)
     }
 }
 
-class EventViewHolder(private val view: View, private val clickListener: ClickListener) :
+open class EventViewHolder(private val view: View, private val clickListener: ClickListener) :
     RecyclerView.ViewHolder(view),
     View.OnClickListener {
     private var flContent: FrameLayout = view.find(R.id.item_event_fl_content)
@@ -200,17 +156,35 @@ class EventViewHolder(private val view: View, private val clickListener: ClickLi
     private var eventLocationName: TextView = view.find(R.id.item_event_tv_event_location_name)
     private var eventDateHour: TextView = view.find(R.id.item_event_tv_event_date_hour)
 
+    companion object{
+        val days = arrayOf("Dom.", "Lun.", "Mar.", "Mie.", "Jue.", "Vie.", "Sáb.")
+    }
+
     init {
         view.setOnClickListener(this)
     }
 
-    @SuppressLint("NewApi")
-    fun bind(event: Event) {
-        flContent.background = view.context.getDrawable(event.image)
+    open fun bind(event: Event) {
+        Glide
+            .with(view.context)
+            .load(event.parseFileImage?.url)
+            .into(object : CustomViewTarget<FrameLayout, Drawable>(flContent) {
+                override fun onLoadFailed(errorDrawable: Drawable?) {}
+                override fun onResourceCleared(placeholder: Drawable?) {}
+                override fun onResourceReady(resource: Drawable,transition: Transition<in Drawable>?) {
+                    flContent.background = resource
+                }
+            })
+
         eventTitle.text = event.name
-        eventLocationName.text = event.location.name
-        val eventDate = LocalDate.parse(event.dates[0].date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        eventDateHour.text = "${eventDate.dayOfMonth} ${eventDate.month} ${event.dates[0].hours[0]}"
+        eventLocationName.text = event.location!!.name
+        val eventDate = event.dates[0].date
+        val calendar = Calendar.getInstance()
+        calendar.time = eventDate.time
+        val strDate = "${days[calendar.get(Calendar.DAY_OF_WEEK)-1]} " +
+                "${DateHourUtils.formatDateToMonthNameShowFormat(eventDate)} " +
+                "${DateHourUtils.formatHourToShowFormat(eventDate)}"
+        eventDateHour.text = strDate
     }
 
     override fun onClick(view: View?) {

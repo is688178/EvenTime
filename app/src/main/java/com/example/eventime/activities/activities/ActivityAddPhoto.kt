@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import com.example.eventime.R
+import com.example.eventime.activities.activities.main.ActivityMain
 import com.parse.ParseFile
 import com.parse.ParseQuery
 import com.parse.ParseUser
@@ -109,7 +110,7 @@ class ActivityAddPhoto : AppCompatActivity() {
 
     private fun provideParseImageFile(bitmap: Bitmap): ParseFile {
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 70, stream)
         val byteArray = stream.toByteArray()
         return ParseFile("profile.jpg", byteArray)
     }

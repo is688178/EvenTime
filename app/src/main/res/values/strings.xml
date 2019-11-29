@@ -33,17 +33,20 @@
     <string name="activity_event_details_tv_comments">Comentarios</string>
 
     <string name="alert_dialog_confirm_event_assistance_tv_title">Confirme su asistencia al evento:</string>
-    <string name="alert_dialog_confirm_event_assistance_tv_date">Fecha:</string>
+    <string name="date_text">Fecha</string>
+    <string name="hour_text">Hora</string>
     <string name="alert_dialog_confirm_event_assistance_tv_hour">Hora:</string>
     <string name="cancel_text">Cancelar</string>
     <string name="alert_dialog_confirm_event_assistance_btn_confirm">Confirmar</string>
 
     <string name="activity_create_public_event_toolbar_title">Nuevo evento</string>
     <string name="activity_create_public_event_name_hint">Nombre</string>
+    <string name="activity_create_public_event_category_hint">Category</string>
     <string name="activity_create_public_event_description_hint">Descripción</string>
     <string name="activity_create_public_event_location_hint">Ubicación</string>
+
     <string name="activity_create_public_event_dates">Fechas</string>
-    <string name="activity_create_public_event_hours">Horarios</string>
+    <string name="hours_text">Horarios</string>
 
     <string name="lorem_ipsum">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
     <string name="activity_create_public_event__btn_add_date">Agregar</string>
@@ -53,4 +56,57 @@
     <string name="fragment_sugested_events_title">Tienes tiempo para estos eventos, aprovecha!</string>
     <string name="no_events_found_text">No se encontraron eventos</string>
     <string name="next">Continuar</string>
+
+    <string name="accept_text">Aceptar</string>
+
+    <string name="you_are_here_text">Estás aquí</string>
+
+    <!--MESSAGES-->
+    <string name="alert_dialog_validation_error_title">¿Se te olvida algo?</string>
+    <string name="set_at_least_on_hour">Seleccione al menos un horario</string>
+    <string name="hour_already_exists">El horario ya existe</string>
+    <string name="date_already_exists">La fecha ya existe</string>
+    <string name="missing_data">Faltan datos</string>
+
+
+    <string name="title_activity_maps">Map</string>
+    <string name="ActivityPrivateEventTitle">Agendar nuevo evento</string>
+    <string name="horario">Horario:</string>
+    <string name="StartHour">Horario Inicio:</string>
+    <string name="createPrivateEventEndTitle">Finaliza:</string>
+    <string name="StartTime"><![CDATA[<Horario Inicio>]]></string>
+    <string name="EndTime"><![CDATA[<Fin>]]></string>
+    <string name="Date">Fecha</string>
+    <string name="fecha"><![CDATA[<Fecha>]]></string>
+    <string name="save">Guardar</string>
+
+    <string name="yourEvents">Tus Eventos:</string>
+    <string name="activity_event_details_tv_no_comments">Nadie ha comentado aún</string>
+    <string name="commentInvite">Dejanos un comentario de este evento.</string>
+    <string name="public_comment">Publicar mi comentario</string>
+
+    <string name="example_1_title">Example 1</string>
+    <string name="example_1_subtitle">Multiple selection, horizontal scrolling, shows usage of \"maxRowCount\" property to switch between week and month modes. Also shows usage of OutDateStyle \"endOfRow\".</string>
+    <string name="example_2_title">Example 2</string>
+    <string name="example_2_subtitle">Month header view, single selection, vertical scrolling, hides in and out dates.</string>
+    <string name="example_3_title">Example 3</string>
+    <string name="example_3_subtitle">Event style implementation, day labels as header view, single selection, month scroll listener. Similar to what is in the Google Calendar app.</string>
+    <string name="example_4_title">Example 4</string>
+    <string name="example_4_subtitle">Continuous selection within one month and across multiple months, dates older than the current day are disabled. Similar to what is in the Airbnb app.</string>
+    <string name="example_5_title">Example 5</string>
+    <string name="example_5_subtitle">Single selection, programmatic calendar scrolling, generates six rows for all months showing \"endOfGrid\" implementation of \"outDateStyle\" option. A flight schedule calender.</string>
+    <string name="example_6_title">Example 6</string>
+    <string name="example_6_subtitle">Custom date width and height, custom month view, item decoration on the CalendarView, continuous horizontal scrolling style.</string>
+    <string name="example_7_title">Example 7</string>
+    <string name="example_7_subtitle">Week mode calendar with single selection. Shows usage of \"hasBoundaries\" and  \"maxRowCount\" properties.</string>
+    <string name="close">Close</string>
+    <string name="example_3_input_dialog_title">Enter event title</string>
+    <string name="example_3_empty_input_text">Text is empty</string>
+    <string name="example_3_dialog_delete_confirmation">Delete this event?</string>
+    <string name="delete">Delete</string>
+    <string name="start_date">Start date</string>
+    <string name="end_date">End date</string>
+    <string name="clear">Clear</string>
+    <string name="week_mode">Week mode</string>
+
 </resources>

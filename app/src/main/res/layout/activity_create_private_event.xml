@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_create_private_event_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_light_gray"
+    android:fillViewport="true"
+    tools:context=".activities.activities.create_private_event.ActivityCreatePrivateEvent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/activity_create_private_event_tl_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/activity_create_private_event_et_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:maxLength="50"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:inputType="textCapSentences|textMultiLine"
+                android:digits=" 0123456789áéíóúÁÉÍÓÚabcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+                android:hint="@string/activity_create_public_event_name_hint"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/activity_create_private_event_tl_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tl_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/activity_create_private_event_et_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:inputType="textCapSentences|textMultiLine"
+                android:minLines="5"
+                android:maxLines="10"
+                android:gravity="top"
+                android:maxLength="300"
+                android:digits=" .,0123456789áéíóúÁÉÍÓÚabcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ"
+                android:hint="@string/activity_create_public_event_description_hint"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/activity_create_private_event_til_location"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tl_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/activity_create_private_event_et_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:focusable="false"
+                android:hint="@string/activity_create_public_event_location_hint" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/activity_create_private_event_tv_dateTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_til_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/Date"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/activity_create_private_event_btn_add_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_dateTitle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/color_secondary_blue"
+            android:src="@drawable/ic_add" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/activity_create_private_event_tv_date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_dateTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/fecha"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/activity_create_private_event_tv_startTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/StartHour"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/activity_create_private_event_btn_add_startTime"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_startTitle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/color_secondary_blue"
+            android:src="@drawable/ic_add" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/activity_create_private_event_tv_startTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_startTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/StartTime"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/activity_create_private_event_tv_endTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_btn_add_startTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/createPrivateEventEndTitle"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/activity_create_private_event_btn_add_end_Time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_endTitle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/color_secondary_blue"
+            android:src="@drawable/ic_add" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/activity_create_private_event_tv_endTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_endTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/EndTime"
+            android:textColor="@color/colorWhite"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/activity_create_private_event_btn_save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_create_private_event_tv_endTime"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_check"/>
+        
+        
+        
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

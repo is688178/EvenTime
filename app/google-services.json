@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "550921368371",
+    "firebase_url": "https://back4appeventtimepush.firebaseio.com",
+    "project_id": "back4appeventtimepush",
+    "storage_bucket": "back4appeventtimepush.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:550921368371:android:45a10e069f159d755f4446",
+        "android_client_info": {
+          "package_name": "com.example.eventime"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "550921368371-8duoq7f9gr2dhsbguv9ja84lmd5rjfa7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7yqjpHyAjPTyaulOt3IclkvRJe8JWANM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "550921368371-8duoq7f9gr2dhsbguv9ja84lmd5rjfa7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
