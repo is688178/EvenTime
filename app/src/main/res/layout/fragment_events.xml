@@ -1,6 +1,6 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,15 +16,15 @@
             android:id="@+id/fragment_events_tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/color_black"
             app:tabGravity="fill"
             app:tabMode="fixed"
-            android:background="@color/color_black"
-            app:tabTextAppearance="@style/TextAppearance.AppCompat.Small"/>
+            app:tabTextAppearance="@style/TextAppearance.AppCompat.Small" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragment_events_rv_categories"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <ViewAnimator
@@ -34,19 +34,30 @@
         android:background="@color/color_dark_gray"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/fragment_events_rv_events"
+        <androidx.core.widget.ContentLoadingProgressBar
+            style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/fragment_events_swipe"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fragment_events_rv_events"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
             android:text="@string/no_events_found_text"
             android:textColor="@color/colorWhite"
-            android:textSize="20dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"/>
+            android:textSize="20sp" />
     </ViewAnimator>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -55,5 +66,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="20dp"
-        android:src="@drawable/ic_add"/>
+        android:src="@drawable/ic_add" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

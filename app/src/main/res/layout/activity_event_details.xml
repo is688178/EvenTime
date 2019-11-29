@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.eventime.activities.activities.ActivityEventDetails">
+    tools:context="com.example.eventime.activities.activities.eventDetails.ActivityEventDetails">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
             android:id="@+id/activity_event_details_collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/concert2"
+            android:background="@drawable/background"
             app:contentScrim="@color/color_black"
             app:layout_scrollFlags="exitUntilCollapsed|scroll"
             app:scrimAnimationDuration="250"
@@ -44,14 +44,15 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/activity_event_details_tv_event_description"
+                style="@style/App_TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:text="@string/lorem_ipsum"
-                android:textSize="16dp"
-                style="@style/App_TextViewStyle"/>
+                android:textSize="16dp" />
 
             <com.google.android.material.textview.MaterialTextView
+                style="@style/App_TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -59,103 +60,147 @@
                 android:text="@string/activity_event_details_tv_location"
                 android:textColor="@color/colorWhite"
                 android:textSize="18dp"
-                android:textStyle="bold"
-                style="@style/App_TextViewStyle" />
+                android:textStyle="bold" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/activity_event_details_tv_event_location"
+                style="@style/App_TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
                 android:text="Auditorio Telmex"
                 android:textColor="@color/colorWhite"
-                android:textSize="16dp"
-                style="@style/App_TextViewStyle"/>
+                android:textSize="16dp" />
 
             <com.google.android.material.textview.MaterialTextView
+                style="@style/App_TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:text="@string/activity_event_details_tv_dates"
+                android:text="@string/date_text"
                 android:textColor="@color/colorWhite"
                 android:textSize="18dp"
-                android:textStyle="bold"
-                style="@style/App_TextViewStyle" />
+                android:textStyle="bold" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/activity_event_details_tv_event_date"
+                style="@style/App_TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:text="@string/activity_event_details_tv_pick_date"
-                android:textColor="@color/color_lighter_gray"
-                style="@style/App_TextViewStyle"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/activity_event_details_rv_dates"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"/>
+                android:text="20 noviembre 2019"
+                android:textColor="@color/colorWhite"
+                android:textSize="16dp" />
 
             <com.google.android.material.textview.MaterialTextView
+                style="@style/App_TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:text="@string/activity_event_details_tv_hours"
+                android:text="@string/hour_text"
                 android:textColor="@color/colorWhite"
                 android:textSize="18dp"
-                android:textStyle="bold"
-                style="@style/App_TextViewStyle" />
+                android:textStyle="bold" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/activity_event_details_tv_event_hour"
+                style="@style/App_TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:text="@string/activity_event_details_tv_pick_hour"
-                android:textColor="@color/color_lighter_gray"
-                style="@style/App_TextViewStyle"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/activity_event_details_rv_hours"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"/>
+                android:text="10:00 pm"
+                android:textColor="@color/colorWhite"
+                android:textSize="16dp" />
 
             <com.google.android.material.textview.MaterialTextView
+                style="@style/App_TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:text="@string/activity_event_details_tv_comments"
                 android:textSize="18dp"
-                android:textStyle="bold"
-                style="@style/App_TextViewStyle"/>
+                android:textStyle="bold" />
 
             <com.google.android.material.textview.MaterialTextView
+                style="@style/App_TextViewStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:text="@string/activity_event_details_tv_comments_subtitle"
-                android:textColor="@color/color_lighter_gray"
-                style="@style/App_TextViewStyle"/>
+                android:textColor="@color/color_lighter_gray" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/activity_event_details_rv_comments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"/>
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/activity_event_details_tv_no_comments"
+                style="@style/App_TextViewStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:text="@string/activity_event_details_tv_no_comments"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/activity_event_details_til_comments"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/activity_event_details_tiet_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/commentInvite"
+                    android:inputType="textAutoCorrect"
+                    android:textColor="@color/textColorBlue"
+                    android:textSize="20sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/activity_event_details_btn_public_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="15dp"
+                android:text="@string/public_comment"
+                android:textSize="15sp" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/activity_event_details_fab_attend_event"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_check" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
