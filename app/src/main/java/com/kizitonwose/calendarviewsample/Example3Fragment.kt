@@ -52,6 +52,7 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.*
+import kotlin.collections.HashSet
 
 private val Context.inputMethodManager
     get() = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -335,104 +336,98 @@ class Example3Fragment : BaseFragment(), HasBackButton, ClickListener {
             if (e == null) {
                 val eventsO = java.util.ArrayList<com.example.eventime.activities.beans.Event>()
 
-                //Aux. to avoid duplicates because of Parse
-                var first = true
-                var lastEventId = ""
-                val calendar = Calendar.getInstance()
-                calendar.set(Calendar.YEAR, 1800)
-                var lastEventDate = calendar.time
+                val pastEvents = HashSet<String>()
 
                 dates.forEach { date ->
                     val event = date.getParseObject("Event")
 
-                    if (event != null &&
-                        (first
-                                || ( lastEventId != event.objectId.toString() )
-                                || ( lastEventId == event.objectId.toString() && lastEventDate != date.getDate("date") )) ) {
+                    val auxDate = Calendar.getInstance()
+                    if (event != null && date != null) {
+                        auxDate.time = date.getDate("date")!!
+                        val eventCheck = event["name"].toString() + DateHourUtils.formatDateToShowFormat(auxDate) + DateHourUtils.formatHourToShowFormat(auxDate)
 
-                        lastEventId = event.objectId.toString()
-                        lastEventDate = date.getDate("date")!!
+                        if (!pastEvents.contains(eventCheck)) {
+                            pastEvents.add(eventCheck)
 
-                        if (event["private"] == true && date.getBoolean("startDate")) {
-                            val l = event.getParseGeoPoint("location")
-                            val location = if (l != null) {
-                                Location(
-                                    event["locationName"].toString(),
-                                    l.latitude, l.longitude
-                                )
-                            } else {
-                                null
-                            }
+                            if (event["private"] == true && date.getBoolean("startDate")) {
+                                val l = event.getParseGeoPoint("location")
+                                val location = if (l != null) {
+                                    Location(
+                                        event["locationName"].toString(),
+                                        l.latitude, l.longitude
+                                    )
+                                } else {
+                                    null
+                                }
 
-                            val imageParseFile = event.getParseFile("image")
+                                val imageParseFile = event.getParseFile("image")
 
-                            val p = event.getParseUser("Person")
-                            val person = if (p != null) {
-                                Person(
-                                    p.objectId,
-                                    p["username"].toString(),
-                                    "",
-                                    null,
-                                    p.getParseFile("image")
-                                )
-                            } else {
-                                null
-                            }
-                            val c = event.getParseObject("Category")
-                            val category = if (c != null) {
-                                Category(
-                                    c.objectId,
-                                    c["name"].toString(),
+                                val p = event.getParseUser("Person")
+                                val person = if (p != null) {
+                                    Person(
+                                        p.objectId,
+                                        p["username"].toString(),
+                                        "",
+                                        null,
+                                        p.getParseFile("image")
+                                    )
+                                } else {
+                                    null
+                                }
+                                val c = event.getParseObject("Category")
+                                val category = if (c != null) {
+                                    Category(
+                                        c.objectId,
+                                        c["name"].toString(),
+                                        false,
+                                        c.getParseFile("icon")
+                                    )
+                                } else {
+                                    null
+                                }
+
+                                val dateO = date.getDate("date")
+                                val calx = Calendar.getInstance()
+                                calx.time = dateO!!
+                                val datesO = java.util.ArrayList<EventDate>()
+                                val eventDate = EventDate(
+                                    date.objectId,
+                                    calx,
                                     false,
-                                    c.getParseFile("icon")
+                                    java.util.ArrayList()
                                 )
-                            } else {
-                                null
+                                eventDate.hours!!.add(cal)
+                                datesO.add(eventDate)
+
+                                val eventO = com.example.eventime.activities.beans.Event(
+                                    event.objectId,
+                                    event["name"].toString(),
+                                    location,
+                                    null,
+                                    event["description"].toString(),
+                                    datesO,
+                                    Calendar.getInstance(),
+                                    category,
+                                    false,
+                                    person,
+                                    false,
+                                    null,
+                                    Calendar.getInstance(),
+                                    imageParseFile,
+                                    event
+                                )
+
+                                if (person != null) {
+                                    if (person.personId == currentUserId)
+                                        eventsO.add(eventO)
+                                }
+
                             }
 
-                            val dateO = date.getDate("date")
-                            val calx = Calendar.getInstance()
-                            calx.time = dateO!!
-                            val datesO = java.util.ArrayList<EventDate>()
-                            val eventDate = EventDate(
-                                date.objectId,
-                                calx,
-                                false,
-                                java.util.ArrayList()
-                            )
-                            eventDate.hours!!.add(cal)
-                            datesO.add(eventDate)
-
-                            val eventO = com.example.eventime.activities.beans.Event(
-                                event.objectId,
-                                event["name"].toString(),
-                                location,
-                                null,
-                                event["description"].toString(),
-                                datesO,
-                                Calendar.getInstance(),
-                                category,
-                                false,
-                                person,
-                                false,
-                                null,
-                                Calendar.getInstance(),
-                                imageParseFile,
-                                event
-                            )
-
-                            if (person != null) {
-                                if (person.personId == currentUserId)
-                                    eventsO.add(eventO)
-                            }
-
+                        } else {
+                            Log.e("EVENTS FETCH", "Error: " + e?.message)
                         }
-
-                    } else {
-                        Log.e("EVENTS FETCH", "Error: " + e?.message)
                     }
-
-                    first = false
                 }
 
                 eventos = eventsO
