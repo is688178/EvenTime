@@ -82,7 +82,6 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         }*/
 
         presenter.fetchCategories(containerContext)
-        presenter.fetchEvents()
 
         return view
     }
@@ -130,6 +129,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         setupCategoriesRecyclerView()
         selectedCategory = this.categories[0]
         this.categories[0].selected = true
+        presenter.fetchEvents()
     }
 
     override fun showEvents(events: ArrayList<Event>) {

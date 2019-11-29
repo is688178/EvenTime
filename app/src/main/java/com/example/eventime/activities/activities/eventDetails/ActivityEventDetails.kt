@@ -180,37 +180,39 @@ class ActivityEventDetails : AppCompatActivity(), ContractEventDetails.View, Vie
     }
 
     private fun saveAndPublicComment() {
-        val strComment = etComment.text.toString()
-        val cal = Calendar.getInstance()
-        val user = ParseUser.getCurrentUser()
+        val strComment = etComment.text.toString().trim()
+        if (strComment.isNotEmpty()) {
+            val cal = Calendar.getInstance()
+            val user = ParseUser.getCurrentUser()
 
-        val queryEvent = ParseQuery.getQuery<ParseObject>("Event")
-        queryEvent.whereEqualTo("objectId", eventId)
-        queryEvent.getFirstInBackground { parseEvent, e ->
-            if (e == null) {
-                val parseObjectComment = ParseObject("Comment")
-                parseObjectComment.put("description", strComment)
-                parseObjectComment.put("date", cal.time)
-                parseObjectComment.put("Person", user)
-                parseObjectComment.put("Event", parseEvent)
+            val queryEvent = ParseQuery.getQuery<ParseObject>("Event")
+            queryEvent.whereEqualTo("objectId", eventId)
+            queryEvent.getFirstInBackground { parseEvent, e ->
+                if (e == null) {
+                    val parseObjectComment = ParseObject("Comment")
+                    parseObjectComment.put("description", strComment)
+                    parseObjectComment.put("date", cal.time)
+                    parseObjectComment.put("Person", user)
+                    parseObjectComment.put("Event", parseEvent)
 
-                doAsync {
-                    parseObjectComment.saveInBackground(object : SaveCallback {
-                        override fun done(e: ParseException?) {
-                            if (e == null) {
-                                Log.d("COMENTARIO GUARDADO", "MSG")
+                    doAsync {
+                        parseObjectComment.saveInBackground(object : SaveCallback {
+                            override fun done(e: ParseException?) {
+                                if (e == null) {
+                                    Log.d("COMENTARIO GUARDADO", "MSG")
 
-                                //Clear textView
-                                etComment.setText("")
-                                refreshRecyclerViewComments()
+                                    //Clear textView
+                                    etComment.setText("")
+                                    refreshRecyclerViewComments()
 
-                            } else
-                                Log.e("ERROR SAVE PARSE", e.toString())
-                        }
-                    })
+                                } else
+                                    Log.e("ERROR SAVE PARSE", e.toString())
+                            }
+                        })
+                    }
+                } else {
+                    Log.e("ERROR SAVING COMMENT", e.message.toString())
                 }
-            } else {
-                Log.e("ERROR SAVING COMMENT", e.message.toString())
             }
         }
     }
