@@ -17,7 +17,7 @@
             android:id="@+id/activity_create_public_event_collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/concert2"
+            android:background="@drawable/background"
             app:contentScrim="@color/color_black"
             app:layout_scrollFlags="exitUntilCollapsed|scroll"
             app:scrimAnimationDuration="250"
