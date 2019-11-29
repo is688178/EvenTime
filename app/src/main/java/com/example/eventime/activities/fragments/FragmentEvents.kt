@@ -23,6 +23,8 @@ import com.example.eventime.activities.listeners.ClickListener
 import com.example.eventime.activities.utils.DateHourUtils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
+import com.parse.ParseACL
+import com.parse.ParseUser
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
@@ -44,6 +46,8 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
 
     private lateinit var adapterRvEvents: AdapterRecyclerViewEvents
     private lateinit var containerContext: Context
+
+    private var lastDateFilter = AdapterRecyclerViewEvents.TODAY_FILTER
 
     companion object {
         const val TODAY_TAB = 0
@@ -68,7 +72,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
 
         /*ParseUser.logInInBackground("uriel", "uriel"){ parseUser, e ->
             if (e == null) {// Hooray! The user is logged in.
-                Toast.makeText(containerContext, "Hecho", Toast.LENGTH_LONG).show()
+                //Toast.makeText(containerContext, "Hecho", Toast.LENGTH_LONG).show()
                 val parseACL = ParseACL(parseUser)
                 parseACL.publicReadAccess = true
                 parseUser.setACL(parseACL)
@@ -132,12 +136,30 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         this.events = events
         setupEventsRecyclerView()
         vaSwitcher.displayedChild = SHOW_EVENTS
-        onTabSelected(tabLayout.getTabAt(0))
+        //onTabSelected(tabLayout.getTabAt(0))
+        filterDate(lastDateFilter)
+        filterCategory()
         swipeToRefresh.isRefreshing = false
     }
 
     override fun showNoEventsFound() {
         vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
+    }
+
+    private fun filterCategory() {
+        if (adapterRvEvents.filterEventsCategory(selectedCategory)) {
+            vaSwitcher.displayedChild = SHOW_EVENTS
+        } else {
+            vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
+        }
+    }
+
+    private fun filterDate(dateFilter: Int) {
+        if (adapterRvEvents.filterEventsDate(dateFilter)) {
+            vaSwitcher.displayedChild = SHOW_EVENTS
+        } else {
+            vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
+        }
     }
 
     //LISTENERS
@@ -151,11 +173,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
                     selectedCategory = categories[index]
                     categoriesAdapter.notifyDataSetChanged()
 
-                    if (adapterRvEvents.filterEventsCategory(selectedCategory)) {
-                        vaSwitcher.displayedChild = SHOW_EVENTS
-                    } else {
-                        vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
-                    }
+                    filterCategory()
                 }
             } rvEvents -> {
                 startActivity(intentFor<ActivityEventDetails>("eventId" to events[index].eventId,
@@ -187,11 +205,8 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
             }
         }
 
-        if (adapterRvEvents.filterEventsDate(dateFilter)) {
-            vaSwitcher.displayedChild = SHOW_EVENTS
-        } else {
-            vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
-        }
+        lastDateFilter = dateFilter
+        filterDate(dateFilter)
     }
     override fun onTabReselected(tab: TabLayout.Tab?) {}
     override fun onTabUnselected(tab: TabLayout.Tab?) {}
