@@ -330,13 +330,30 @@ class Example3Fragment : BaseFragment(), HasBackButton, ClickListener {
         queryDate.include("Event.Person")
         queryDate.include("Event.Category")
         queryDate.addAscendingOrder("date")
+        queryDate.whereGreaterThanOrEqualTo("date", cal.time)
         queryDate.findInBackground { dates, e ->
             if (e == null) {
-                val eventsO = ArrayList<com.example.eventime.activities.beans.Event>()
+                val eventsO = java.util.ArrayList<com.example.eventime.activities.beans.Event>()
+
+                //Aux. to avoid duplicates because of Parse
+                var first = true
+                var lastEventId = ""
+                val calendar = Calendar.getInstance()
+                calendar.set(Calendar.YEAR, 1800)
+                var lastEventDate = calendar.time
+
                 dates.forEach { date ->
                     val event = date.getParseObject("Event")
-                    if (event != null) {
-                        if (event["private"] == true) {
+
+                    if (event != null &&
+                        (first
+                                || ( lastEventId != event.objectId.toString() )
+                                || ( lastEventId == event.objectId.toString() && lastEventDate != date.getDate("date") )) ) {
+
+                        lastEventId = event.objectId.toString()
+                        lastEventDate = date.getDate("date")!!
+
+                        if (event["private"] == true && date.getBoolean("startDate")) {
                             val l = event.getParseGeoPoint("location")
                             val location = if (l != null) {
                                 Location(
@@ -376,12 +393,12 @@ class Example3Fragment : BaseFragment(), HasBackButton, ClickListener {
                             val dateO = date.getDate("date")
                             val calx = Calendar.getInstance()
                             calx.time = dateO!!
-                            val datesO = ArrayList<EventDate>()
+                            val datesO = java.util.ArrayList<EventDate>()
                             val eventDate = EventDate(
                                 date.objectId,
                                 calx,
                                 false,
-                                ArrayList()
+                                java.util.ArrayList()
                             )
                             eventDate.hours!!.add(cal)
                             datesO.add(eventDate)
@@ -408,13 +425,17 @@ class Example3Fragment : BaseFragment(), HasBackButton, ClickListener {
                                 if (person.personId == currentUserId)
                                     eventsO.add(eventO)
                             }
+
                         }
+
                     } else {
                         Log.e("EVENTS FETCH", "Error: " + e?.message)
                     }
+
+                    first = false
                 }
 
-                this.eventos = eventsO
+                eventos = eventsO
                 setupEventsRecyclerView()
             } else {
                 Log.e("EVENTS FETCH", "Error: " + e.message!!)
