@@ -32,13 +32,8 @@ class ActivitySelectDateHours : AppCompatActivity(), View.OnClickListener {
     private lateinit var fabSave: FloatingActionButton
 
     private var dates = ArrayList<Calendar>()
-    //private var hours = ArrayList<String>()
     private var hours = ArrayList<Calendar>()
     private lateinit var adapterRecyclerViewHours: AdapterRecyclerViewHours
-
-    /*private var cDay = currentDay
-    private var cMonth = currentMonth
-    private var cYear = currentYear*/
 
     companion object {
         const val DATE = "date"
@@ -57,24 +52,14 @@ class ActivitySelectDateHours : AppCompatActivity(), View.OnClickListener {
         val extras = intent.extras
         if (extras != null) {
             val datesStr = extras.getString(DATES)!!
-            //datesStr.split(",").toCollection(dates)
             dates = DateHourUtils.splitDatesToArrayList(datesStr)
         }
 
-        /*var date = LocalDate.now()
-        var cDay = date.dayOfMonth
-        var cMonth = date.monthValue - 1
-        var cYear = date.year*/
         val cal = Calendar.getInstance()
 
         while (!setDate(cal, false)) {
             //CHECK MONTH AND YEAR
-            //increaseDate()
             cal.add(Calendar.DAY_OF_MONTH, 1)
-            /*date = date.plusDays(1)
-            cDay = date.dayOfMonth
-            cMonth = date.monthValue - 1
-            cYear = date.year*/
         }
     }
 
@@ -84,14 +69,6 @@ class ActivitySelectDateHours : AppCompatActivity(), View.OnClickListener {
         btnAddHour = find(R.id.activity_select_date_hours_btn_add_hour)
         fabSave = find(R.id.activity_select_date_hours_fab_save)
     }
-
-    /*private fun setupToolbar() {
-        val toolbar = Toolbar(this)
-        toolbar.setTitleTextColor(resources.getColor(R.color.colorWhite))
-        toolbar.setBackgroundColor(resources.getColor(R.color.colorWhite))
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    }*/
 
     private fun setClickListeners() {
         tvDate.setOnClickListener(this)
@@ -129,12 +106,7 @@ class ActivitySelectDateHours : AppCompatActivity(), View.OnClickListener {
 
         val dateStr = tvDate.text.toString()
         if (dateStr.isNotEmpty()) {
-            //val values = DateHourUtils.unformatDate(date)!!
             val date = DateHourUtils.createDateFromString(dateStr)
-            /*dayToSet = values[DateHourUtils.DAY]!!
-            monthToSet = values[DateHourUtils.MONTH]!!
-            yearToSet = values[DateHourUtils.YEAR]!!*/
-
 
             dayToSet = date.get(Calendar.DAY_OF_MONTH)
             monthToSet = date.get(Calendar.MONTH) - 1

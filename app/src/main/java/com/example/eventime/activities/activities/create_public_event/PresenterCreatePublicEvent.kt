@@ -16,6 +16,33 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
     ContractCreatePublicEvent.Presenter {
 
     override fun saveEvent(event: Event) {
+
+        if (saveEventAndReturn(event)) {
+            // Execute ParseCloud CallFunction
+            val params = HashMap<String, String>()
+
+            val strAlert = "Nuevo evento:  ${event.name}  a partir del " +
+                    "${DateHourUtils.formatDateToShowFormat(event.dates[0].date)} " +
+                    "${DateHourUtils.formatHourToShowFormat(event.dates[0].date)}"
+
+            params["alert"] = strAlert
+            ParseCloud.callFunctionInBackground("evenTime", params,
+                FunctionCallback<String> { value, parseException ->
+                    if (parseException == null) {
+                        Log.d("PC RETURN", value.toString())
+                    } else {
+                        Log.e("PC ERROR", parseException.message.toString())
+                    }
+                }
+            ) // Execute ParseCloud CallFunction
+        }
+    }
+
+
+    private fun saveEventAndReturn(event: Event): Boolean {
+
+        var result = true
+
         val currentUser = ParseUser.getCurrentUser()
         val acl = ParseACL(currentUser)
         acl.publicReadAccess = true
@@ -52,27 +79,14 @@ class PresenterCreatePublicEvent(private val view: ContractCreatePublicEvent.Vie
                             Log.e("CREATE EVENT ERR", e.message!!)
                         } else {
                             Log.d("CREATE EVENT", "SUCCESS")
-
-                            // Execute ParseCloud CallFunction
-                            val params = HashMap<String, String>()
-                            params["alert"] = "Se ha publicado: " + event.name +
-                                    DateHourUtils.formatDateToShowFormat(event.dates[0].date) +
-                                    DateHourUtils.formatHourToShowFormat(event.dates[0].date)
-                            ParseCloud.callFunctionInBackground("evenTime", params,
-                                FunctionCallback<String> { value, parseException ->
-                                    if (parseException == null) {
-                                        Log.d("PC RETURN", value.toString())
-                                    } else {
-                                        Log.e("PC ERROR", parseException.message.toString())
-                                    }
-                                }
-                            )
-
+                            result = false
                         }
                     }
                 }
             }
         }
+
+        return result
     }
 
 

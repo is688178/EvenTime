@@ -121,7 +121,7 @@ class FragmentSuggestedEvents : Fragment(), ClickListener, View.OnClickListener 
 
 
                             if (person != null)
-                                if (person.personId == currentUserId) {
+                                if (person.personId == currentUserId && date.getBoolean("startDate")) {
                                     val timeInterval = TimeInterval(
                                         dates[index]["date"] as Date,
                                         dates[(index + 1)]["date"] as Date
@@ -138,18 +138,35 @@ class FragmentSuggestedEvents : Fragment(), ClickListener, View.OnClickListener 
             }
         }
 
+        //FETCH EVENT DATES
         val queryDate = ParseQuery.getQuery<ParseObject>("EventDate")
         queryDate.include("Event")
         queryDate.include("Event.Person")
         queryDate.include("Event.Category")
-        queryDate.orderByDescending("createdAt")
+        queryDate.addAscendingOrder("date")
         queryDate.whereGreaterThanOrEqualTo("date", cal.time)
         queryDate.findInBackground { dates, e ->
             if (e == null) {
                 val eventsO = ArrayList<Event>()
+
+                //Aux. to avoid duplicates because of Parse
+                var first = true
+                var lastEventId = ""
+                val calendar = Calendar.getInstance()
+                calendar.set(Calendar.YEAR, 1800)
+                var lastEventDate = calendar.time
+
                 dates.forEach { date ->
                     val event = date.getParseObject("Event")
-                    if (event != null) {
+
+                    if (event != null &&
+                        (first
+                                || ( lastEventId != event.objectId.toString() )
+                                || ( lastEventId == event.objectId.toString() && lastEventDate != date.getDate("date") )) ) {
+
+                        lastEventId = event.objectId.toString()
+                        lastEventDate = date.getDate("date")!!
+
                         if (event["private"] == false) {
                             val l = event.getParseGeoPoint("location")
                             val location = if (l != null) {
@@ -228,9 +245,12 @@ class FragmentSuggestedEvents : Fragment(), ClickListener, View.OnClickListener 
                                     eventsO.add(eventO)
 
                         }
+
                     } else {
                         Log.e("EVENTS FETCH", "Error: " + e?.message)
                     }
+
+                    first = false
                 }
 
                 this.events = eventsO
@@ -239,7 +259,6 @@ class FragmentSuggestedEvents : Fragment(), ClickListener, View.OnClickListener 
                 Log.e("EVENTS FETCH", "Error: " + e.message!!)
             }
         }
-
 
     }
 
