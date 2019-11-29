@@ -49,6 +49,8 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
 
     private var lastDateFilter = AdapterRecyclerViewEvents.TODAY_FILTER
 
+    private var gotEvents = false
+
     companion object {
         const val TODAY_TAB = 0
         const val THIS_WEEK_TAB = 1
@@ -134,6 +136,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
 
     override fun showEvents(events: ArrayList<Event>) {
         this.events = events
+        gotEvents = true
         setupEventsRecyclerView()
         vaSwitcher.displayedChild = SHOW_EVENTS
         //onTabSelected(tabLayout.getTabAt(0))
@@ -144,6 +147,7 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
 
     override fun showNoEventsFound() {
         vaSwitcher.displayedChild = SHOW_NO_EVENTS_FOUNT
+        gotEvents = false
     }
 
     private fun filterCategory() {
@@ -173,7 +177,9 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
                     selectedCategory = categories[index]
                     categoriesAdapter.notifyDataSetChanged()
 
-                    filterCategory()
+                    if (gotEvents) {
+                        filterCategory()
+                    }
                 }
             } rvEvents -> {
                 startActivity(intentFor<ActivityEventDetails>("eventId" to events[index].eventId,
@@ -206,7 +212,9 @@ class FragmentEvents : Fragment(), TabLayout.OnTabSelectedListener, ClickListene
         }
 
         lastDateFilter = dateFilter
-        filterDate(dateFilter)
+        if (gotEvents) {
+            filterDate(dateFilter)
+        }
     }
     override fun onTabReselected(tab: TabLayout.Tab?) {}
     override fun onTabUnselected(tab: TabLayout.Tab?) {}
