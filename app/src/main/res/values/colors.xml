@@ -2,7 +2,6 @@
 <resources>
     <color name="textColorBlue">#809ECB</color>
     <color name="colorWhite">#FFFFFF</color>
-    <color name="black">#000</color>
 
     <color name="color_primary_blue">#208BBB</color>
     <color name="color_secondary_blue">#2962FF</color>

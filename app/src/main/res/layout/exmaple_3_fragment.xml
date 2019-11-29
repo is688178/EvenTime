@@ -45,10 +45,11 @@
                 tools:text="7 Jan, 2019" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/exThreeRv"
+                android:id="@+id/fragment_calendar_rv_userCreatedEvents"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
+                android:layout_height="match_parent"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp" />
 
         </LinearLayout>
 

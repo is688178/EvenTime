@@ -3,6 +3,7 @@ package com.kizitonwose.calendarviewsample
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,18 +23,30 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.eventime.R
 import com.example.eventime.activities.activities.create_private_event.ActivityCreatePrivateEvent
+import com.example.eventime.activities.activities.eventDetails.ActivityEventDetails
+import com.example.eventime.activities.adapters.AdapterRecyclerViewEvents
+import com.example.eventime.activities.beans.Category
+import com.example.eventime.activities.beans.EventDate
+import com.example.eventime.activities.beans.Location
+import com.example.eventime.activities.beans.Person
+import com.example.eventime.activities.listeners.ClickListener
+import com.example.eventime.activities.utils.DateHourUtils
 import com.kizitonwose.calendarview.model.CalendarDay
 import com.kizitonwose.calendarview.model.CalendarMonth
 import com.kizitonwose.calendarview.model.DayOwner
 import com.kizitonwose.calendarview.ui.DayBinder
 import com.kizitonwose.calendarview.ui.MonthHeaderFooterBinder
 import com.kizitonwose.calendarview.ui.ViewContainer
+import com.parse.ParseObject
+import com.parse.ParseQuery
+import com.parse.ParseUser
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.calendar_day_legend.view.*
 import kotlinx.android.synthetic.main.example_3_calendar_day.view.*
 import kotlinx.android.synthetic.main.exmaple_3_fragment.*
 import kotlinx.android.synthetic.main.home_activity.*
 import org.jetbrains.anko.find
+import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 import org.threeten.bp.LocalDate
 import org.threeten.bp.YearMonth
@@ -78,7 +91,12 @@ class Example3EventsAdapter(val onClick: (Event) -> Unit) :
 
 }
 
-class Example3Fragment : BaseFragment(), HasBackButton {
+class Example3Fragment : BaseFragment(), HasBackButton, ClickListener {
+
+    private lateinit var adapterRvEvents: AdapterRecyclerViewEvents
+    private lateinit var containerContext: Context
+    private var eventos = ArrayList<com.example.eventime.activities.beans.Event>()
+    private lateinit var mRecyclerView: RecyclerView
 
     private val eventsAdapter = Example3EventsAdapter {
         AlertDialog.Builder(requireContext())
@@ -90,15 +108,15 @@ class Example3Fragment : BaseFragment(), HasBackButton {
             .show()
     }
 
+
     private val inputDialog by lazy {
         val editText = AppCompatEditText(requireContext())
         val layout = FrameLayout(requireContext()).apply {
-            // Setting the padding on the EditText only pads the input area
-            // not the entire EditText so we wrap it in a FrameLayout.
             val padding = dpToPx(20, requireContext())
             setPadding(padding, padding, padding, padding)
             addView(editText, FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
         }
+
         AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.example_3_input_dialog_title))
             .setView(layout)
@@ -133,15 +151,26 @@ class Example3Fragment : BaseFragment(), HasBackButton {
     private val events = mutableMapOf<LocalDate, List<Event>>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.exmaple_3_fragment, container, false)
+
+        val view = inflater.inflate(R.layout.exmaple_3_fragment, container, false)
+        this.containerContext = container!!.context
+        return view
+
+        //return inflater.inflate(R.layout.exmaple_3_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        exThreeRv.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-        exThreeRv.adapter = eventsAdapter
-        exThreeRv.addItemDecoration(DividerItemDecoration(requireContext(), RecyclerView.VERTICAL))
+        //exThreeRv.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        //exThreeRv.adapter = eventsAdapter
+        //exThreeRv.addItemDecoration(
+            DividerItemDecoration(requireContext(), RecyclerView.VERTICAL)
+
+
+
+        mRecyclerView = view.find(R.id.fragment_calendar_rv_userCreatedEvents)
+        fetchUserEvents()
 
         val daysOfWeek = daysOfWeekFromLocale()
         val currentMonth = YearMonth.now()
@@ -229,6 +258,22 @@ class Example3Fragment : BaseFragment(), HasBackButton {
         }
     }
 
+
+    override fun onClick(view: View, index: Int) {
+        when (view.parent) {
+            mRecyclerView -> {
+                startActivity(
+                    intentFor<ActivityEventDetails>(
+                        "eventId" to eventos[index].eventId,
+                        "eventDateId" to eventos[index].dates[0].eventDateId,
+                        "date" to DateHourUtils.formatDateToShowFormat(eventos[index].dates[0].date),
+                        "hour" to DateHourUtils.formatHourToString(eventos[index].dates[0].date)
+                    )
+                )
+            }
+        }
+    }
+
     private fun selectDate(date: LocalDate) {
         if (selectedDate != date) {
             val oldDate = selectedDate
@@ -273,5 +318,115 @@ class Example3Fragment : BaseFragment(), HasBackButton {
         super.onStop()
 //        (activity as AppCompatActivity).homeToolbar.setBackgroundColor(requireContext().getColorCompat(R.color.colorPrimary))
         requireActivity().window.statusBarColor = requireContext().getColorCompat(R.color.colorPrimaryDark)
+    }
+
+    private fun fetchUserEvents() {
+        //FETCH EVENT DATES
+        val cal = Calendar.getInstance()
+        val currentUserId = ParseUser.getCurrentUser().objectId
+
+        val queryDate = ParseQuery.getQuery<ParseObject>("EventDate")
+        queryDate.include("Event")
+        queryDate.include("Event.Person")
+        queryDate.include("Event.Category")
+        queryDate.addAscendingOrder("date")
+        queryDate.findInBackground { dates, e ->
+            if (e == null) {
+                val eventsO = ArrayList<com.example.eventime.activities.beans.Event>()
+                dates.forEach { date ->
+                    val event = date.getParseObject("Event")
+                    if (event != null) {
+                        if (event["private"] == true) {
+                            val l = event.getParseGeoPoint("location")
+                            val location = if (l != null) {
+                                Location(
+                                    event["locationName"].toString(),
+                                    l.latitude, l.longitude
+                                )
+                            } else {
+                                null
+                            }
+
+                            val imageParseFile = event.getParseFile("image")
+
+                            val p = event.getParseUser("Person")
+                            val person = if (p != null) {
+                                Person(
+                                    p.objectId,
+                                    p["username"].toString(),
+                                    "",
+                                    null,
+                                    p.getParseFile("image")
+                                )
+                            } else {
+                                null
+                            }
+                            val c = event.getParseObject("Category")
+                            val category = if (c != null) {
+                                Category(
+                                    c.objectId,
+                                    c["name"].toString(),
+                                    false,
+                                    c.getParseFile("icon")
+                                )
+                            } else {
+                                null
+                            }
+
+                            val dateO = date.getDate("date")
+                            val calx = Calendar.getInstance()
+                            calx.time = dateO!!
+                            val datesO = ArrayList<EventDate>()
+                            val eventDate = EventDate(
+                                date.objectId,
+                                calx,
+                                false,
+                                ArrayList()
+                            )
+                            eventDate.hours!!.add(cal)
+                            datesO.add(eventDate)
+
+                            val eventO = com.example.eventime.activities.beans.Event(
+                                event.objectId,
+                                event["name"].toString(),
+                                location,
+                                null,
+                                event["description"].toString(),
+                                datesO,
+                                Calendar.getInstance(),
+                                category,
+                                false,
+                                person,
+                                false,
+                                null,
+                                Calendar.getInstance(),
+                                imageParseFile,
+                                event
+                            )
+
+                            if (person != null) {
+                                if (person.personId == currentUserId)
+                                    eventsO.add(eventO)
+                            }
+                        }
+                    } else {
+                        Log.e("EVENTS FETCH", "Error: " + e?.message)
+                    }
+                }
+
+                this.eventos = eventsO
+                setupEventsRecyclerView()
+            } else {
+                Log.e("EVENTS FETCH", "Error: " + e.message!!)
+            }
+        }
+    }
+
+
+
+    private fun setupEventsRecyclerView() {
+        adapterRvEvents = AdapterRecyclerViewEvents(eventos, this, false)
+        mRecyclerView.adapter = adapterRvEvents
+        mRecyclerView.layoutManager = LinearLayoutManager(containerContext)
     }
 }
