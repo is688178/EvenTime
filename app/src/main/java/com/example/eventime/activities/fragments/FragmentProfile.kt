@@ -142,6 +142,140 @@ class FragmentProfile : Fragment(), ClickListener, View.OnClickListener {
         }
     }
 
+
+
+    private fun fetchUserEvents() {
+        //FETCH EVENT DATES
+        val cal = Calendar.getInstance()
+        val currentUserId = ParseUser.getCurrentUser().objectId
+
+        val queryDate = ParseQuery.getQuery<ParseObject>("EventDate")
+        queryDate.include("Event")
+        queryDate.include("Event.Person")
+        queryDate.include("Event.Category")
+        queryDate.addAscendingOrder("date")
+        queryDate.whereGreaterThanOrEqualTo("date", cal.time)
+        queryDate.findInBackground { dates, e ->
+            if (e == null) {
+                val eventsO = java.util.ArrayList<Event>()
+
+                //Aux. to avoid duplicates because of Parse
+                var first = true
+                var lastEventId = ""
+                val calendar = Calendar.getInstance()
+                calendar.set(Calendar.YEAR, 1800)
+                var lastEventDate = calendar.time
+
+                dates.forEach { date ->
+                    val event = date.getParseObject("Event")
+
+                    if (event != null &&
+                        (first
+                                || ( lastEventId != event.objectId.toString() )
+                                || ( lastEventId == event.objectId.toString() && lastEventDate != date.getDate("date") )) ) {
+
+                        lastEventId = event.objectId.toString()
+                        lastEventDate = date.getDate("date")!!
+
+                        if (event["private"] == false) {
+                            val l = event.getParseGeoPoint("location")
+                            val location = if (l != null) {
+                                Location(
+                                    event["locationName"].toString(),
+                                    l.latitude, l.longitude
+                                )
+                            } else {
+                                null
+                            }
+
+                            val imageParseFile = event.getParseFile("image")
+
+                            val p = event.getParseUser("Person")
+                            val person = if (p != null) {
+                                Person(
+                                    p.objectId,
+                                    p["username"].toString(),
+                                    "",
+                                    null,
+                                    p.getParseFile("image")
+                                )
+                            } else {
+                                null
+                            }
+                            val c = event.getParseObject("Category")
+                            val category = if (c != null) {
+                                Category(
+                                    c.objectId,
+                                    c["name"].toString(),
+                                    false,
+                                    c.getParseFile("icon")
+                                )
+                            } else {
+                                null
+                            }
+
+                            val dateO = date.getDate("date")
+                            val calx = Calendar.getInstance()
+                            calx.time = dateO!!
+                            val datesO = java.util.ArrayList<EventDate>()
+                            val eventDate = EventDate(
+                                date.objectId,
+                                calx,
+                                false,
+                                java.util.ArrayList()
+                            )
+                            eventDate.hours!!.add(cal)
+                            datesO.add(eventDate)
+
+                            val eventO = Event(
+                                event.objectId,
+                                event["name"].toString(),
+                                location,
+                                null,
+                                event["description"].toString(),
+                                datesO,
+                                Calendar.getInstance(),
+                                category,
+                                false,
+                                person,
+                                false,
+                                null,
+                                Calendar.getInstance(),
+                                imageParseFile,
+                                event
+                            )
+
+                            if (person != null) {
+                                if (person.personId == currentUserId)
+                                    eventsO.add(eventO)
+                            }
+
+                        }
+
+                    } else {
+                        Log.e("EVENTS FETCH", "Error: " + e?.message)
+                    }
+
+                    first = false
+                }
+
+                this.events = eventsO
+                setupEventsRecyclerView()
+            } else {
+                Log.e("EVENTS FETCH", "Error: " + e.message!!)
+            }
+        }
+
+    }
+
+
+
+
+
+    /*
+
+
+
     private fun fetchUserEvents() {
         //FETCH EVENT DATES
         val cal = Calendar.getInstance()
@@ -242,7 +376,7 @@ class FragmentProfile : Fragment(), ClickListener, View.OnClickListener {
                 Log.e("EVENTS FETCH", "Error: " + e.message!!)
             }
         }
-    }
+    }*/
 
     private fun setupEventsRecyclerView() {
         adapterRvEvents = AdapterRecyclerViewEvents(events, this, false)

@@ -39,7 +39,6 @@ class CommentViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
     private val ivPersonPhoto: ImageView = view.find(R.id.item_comment_iv_person_photo)
     private val tvPersonName: TextView = view.find(R.id.item_comment_tv_person_name)
     private val tvCommentDate: TextView = view.find(R.id.item_comment_tv_comment_date)
-    private val rbEventRating: RatingBar = view.find(R.id.item_comment_rb_event_rating)
     private val tvCommentDescription: TextView = view.find(R.id.item_comment_tv_comment_description)
 
     fun bind(comment: Comment) {

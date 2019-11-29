@@ -57,9 +57,25 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
         queryDate.findInBackground { dates, e ->
             if (e == null) {
                 val eventsO = ArrayList<Event>()
+
+                //Aux. to avoid duplicates because of Parse
+                var first = true
+                var lastEventId = ""
+                val calendar = Calendar.getInstance()
+                calendar.set(Calendar.YEAR, 1800)
+                var lastEventDate = calendar.time
+
                 dates.forEach { date ->
                     val event = date.getParseObject("Event")
-                    if (event != null) {
+
+                    if (event != null &&
+                        (first
+                                || ( lastEventId != event.objectId.toString() )
+                                || ( lastEventId == event.objectId.toString() && lastEventDate != date.getDate("date") )) ) {
+
+                        lastEventId = event.objectId.toString()
+                        lastEventDate = date.getDate("date")!!
+
                         if (event["private"] == false) {
                             val l = event.getParseGeoPoint("location")
                             val location = if (l != null) {
@@ -133,6 +149,8 @@ class PresenterMain(private val view: ContractMain.View) : ContractMain.Presente
                     } else {
                         Log.e("EVENTS FETCH", "Error: " + e?.message)
                     }
+
+                    first = false
                 }
 
                 if (eventsO.size != 0) {
