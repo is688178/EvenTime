@@ -1,8 +1,10 @@
 package com.example.eventime.activities.activities.create_public_event
 
+import android.Manifest
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
@@ -17,6 +19,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -87,6 +90,8 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
         const val SELECT_HOUR_REQUEST = 1000
         const val AUTOCOMPLETE_REQUEST = 1100
         const val PICK_PHOTO_REQUEST = 1200
+
+        const val READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 100
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -268,14 +273,24 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
         etCategoriesSp.setText(eventCategory.name)
     }
 
+    private fun openGallery() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                READ_EXTERNAL_STORAGE_PERMISSION_REQUEST)
+        } else {
+            val intent =
+                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            startActivityForResult(intent, PICK_PHOTO_REQUEST)
+        }
+    }
+
     //LISTENERS
 
     override fun onClick(view: View?) {
         when (view!!.id) {
             fabAddPhoto.id -> {
-                val intent =
-                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
-                startActivityForResult(intent, PICK_PHOTO_REQUEST)
+                openGallery()
             }
             etCategoriesSp.id -> {
                 showCategoriesAlertDialog()
@@ -348,6 +363,21 @@ class ActivityCreatePublicEvent : AppCompatActivity(), View.OnClickListener,
                     collapsingToolbar.background = Drawable.createFromStream(inpStream, "")
                     photo = BitmapFactory.decodeStream(inpStream2)
                 }
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            READ_EXTERNAL_STORAGE_PERMISSION_REQUEST -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    openGallery()
+                } else {
+                    Toast.makeText(this, "No se concedieron los permisos necesarios", Toast.LENGTH_LONG).show()
+                }
+                return
             }
         }
     }
