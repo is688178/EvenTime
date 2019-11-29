@@ -22,10 +22,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.jetbrains.anko.find
 import com.example.eventime.R
 import com.example.eventime.activities.utils.DateHourUtils
+import com.example.eventime.activities.utils.ParseFileConvert
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.parse.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -123,6 +125,16 @@ class ActivityEventDetails : AppCompatActivity(), ContractEventDetails.View, Vie
             DateHourUtils.formatDateToMonthNameShowFormat(event.dates[0].date)
         alertDialog.find<TextView>(R.id.alert_dialog_confirm_event_assistance_tv_event_hour).text =
             DateHourUtils.formatHourToShowFormat(event.dates[0].date)
+
+        alertDialog.find<TextView>(R.id.alert_dialog_confirm_event_assistance_tv_cancel).setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.find<Button>(R.id.alert_dialog_confirm_event_assistance_btn_confirm).setOnClickListener {
+            savePublicAsPrivateEvent()
+            alertDialog.dismiss()
+        }
+
     }
 
     //VIEW INTERFACE IMPLEMENTATION
@@ -244,6 +256,62 @@ class ActivityEventDetails : AppCompatActivity(), ContractEventDetails.View, Vie
         }
 
 
+    }
+
+
+    private fun savePublicAsPrivateEvent() {
+        val parseObjectEvent = ParseObject("Event")
+        parseObjectEvent.put("locationName", event.location!!.name)
+        parseObjectEvent.put("private", true)
+        parseObjectEvent.put("name", event.name)
+        parseObjectEvent.put("Person", ParseUser.getCurrentUser())
+
+        val imageStream: InputStream = event.parseFileImage!!.dataStream
+        val bitmap = BitmapFactory.decodeStream(imageStream)
+        val parseFile = ParseFileConvert.provideParseImageFile(bitmap)
+        parseObjectEvent.put("image", parseFile)
+
+        val location = event.location as Location
+
+        val geoPoint = ParseGeoPoint(location.latitude, location.longitude)
+        parseObjectEvent.put("location", geoPoint)
+
+        parseObjectEvent.put("description", event.description)
+
+        doAsync {
+            parseObjectEvent.saveInBackground(object : SaveCallback {
+                override fun done(e: ParseException?) {
+                    if (e == null) {
+                        var date = eventDate.time
+
+                        val parseObjectEventDateStart = ParseObject("EventDate")
+                        parseObjectEventDateStart.put("date", date)
+                        parseObjectEventDateStart.put("Event", parseObjectEvent)
+                        parseObjectEventDateStart.put("startDate", true)
+                        parseObjectEventDateStart.saveInBackground(object : SaveCallback {
+                            override fun done(e: ParseException?) {
+                                if (e != null)
+                                    Log.e("ERROR SAVE StartDate", e.message.toString())
+                            }
+                        })
+                        Thread.sleep(1000)
+
+                        date.time = date.time + 1
+                        val parseObjectEventDateEnd = ParseObject("EventDate")
+                        parseObjectEventDateEnd.put("date", date)
+                        parseObjectEventDateEnd.put("Event", parseObjectEvent)
+                        parseObjectEventDateEnd.put("startDate", false)
+                        parseObjectEventDateEnd.saveInBackground(object : SaveCallback {
+                            override fun done(e: ParseException?) {
+                                if (e != null)
+                                    Log.e("ERROR SAVE EndDate", e.message.toString())
+                            }
+                        })
+                    } else
+                        Log.d("ERROR SAVE PARSE", e.toString())
+                }
+            })
+        }
     }
 
 
