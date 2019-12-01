@@ -1,12 +1,11 @@
 package com.example.eventime.activities.beans
 
 import android.graphics.Bitmap
+import android.util.Log
 import com.parse.ParseFile
 import com.parse.ParseObject
 import java.util.*
 import kotlin.collections.ArrayList
-import android.os.Parcel
-import android.os.Parcelable
 
 data class Event(
     val eventId: String?,
@@ -22,12 +21,30 @@ data class Event(
     val postedPerson: Person?,
     var firstOfCategory: Boolean?,
     val comments: ArrayList<Comment>?,
-    //val nextDate: Calendar,
-    //val nextHour: Calendar
     val nextDateHour: Calendar?,
     var parseFileImage: ParseFile? = null,
     var parseObject: ParseObject = ParseObject("")
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        try {
+            if(other == null)
+                return false
+
+            val otherEvent = other as Event
+
+            return this.privateEvent == otherEvent.privateEvent
+                    && this.postedPerson == otherEvent.postedPerson
+                    && this.category == otherEvent.category
+                    && this.location == otherEvent.location
+                    && this.name == otherEvent.name
+                    && this.description == otherEvent.description
+
+        } catch (e : Exception) {
+            Log.e("ERROR EQUALS", "Cant CAST")
+            return false
+        }
+    }
+}
 
 
 data class Location(
@@ -40,7 +57,6 @@ data class EventDate(
     val eventDateId: String?,
     val date: Calendar,
     val startDate: Boolean,
-    //val event: Event,
     val hours: ArrayList<Calendar>?
 )
 
